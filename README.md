@@ -29,7 +29,34 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This project uses **PostgreSQL** as the database and **Prisma ORM** for schema management.
+The database is hosted on **Render**.
+
+### Entities
+
+The system includes the following entities:
+
+* **User** – stores user information
+* **Post** – blog posts created by users
+* **Comment** – comments on posts
+* **Category** – categories used to organize posts
+* **PostCategory** – junction table for the many-to-many relationship between posts and categories
+* **Like** – stores user likes on posts
+
+### Relationships
+
+* One **User** can create many **Posts**
+* One **User** can write many **Comments**
+* One **Post** can have many **Comments**
+* **Post** and **Category** have a many-to-many relationship via **PostCategory**
+* Users can **like posts**
+
+### ER Diagram
+
+The following diagram illustrates the database structure.
+
+![ER Diagram](./er-diagram.png)
+
 
 ## Project setup
 
