@@ -9,6 +9,12 @@ export class AuthController {
     return "Logged in";
   }
 
+  @Get('logout')
+  logout(@Req() req) {
+    req.session.destroy();
+    return "Logged out";
+  }
+  
   @Get('profile')
   profile(@Req() req) {
 

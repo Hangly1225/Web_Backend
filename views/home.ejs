@@ -1,6 +1,15 @@
 <%- include('partials/header') %>
 
 <h2>Home page</h2>
-<p>Hello <%= name %></p>
+<% if (user) { %>
+  Logged in as <%= user %>
+  <a href="/logout">Log out</a>
+<% } else { %>
+  <form action="/login" method="post">
+    <input name="username">
+    <input name="password" type="password">
+    <button>Login</button>
+  </form>
+<% } %>
 
 <%- include('partials/footer') %>
