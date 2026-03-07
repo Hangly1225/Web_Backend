@@ -1,0 +1,36 @@
+:root {
+    --primary-color: rgb(166, 242, 193);
+    --white--color: #fff;
+    --black-color: #000;
+    --text-color:#333;
+    --border-color: #dbdbdb;
+}
+
+/*INDEX*/
+.title_best_seller {
+    background-color: var(--primary-color);
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    color: black;
+    text-align: center;
+    position: sticky;
+}
+
+.category-row {
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.category_content-item {
+    
+    width: 100%;
+    background-color: var(--white--color);
+    text-align: center;
+}
+
+.category_content-item img {
+    width: 20%;
+}

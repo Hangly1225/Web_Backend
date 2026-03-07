@@ -1,0 +1,30 @@
+:root {
+    --primary-color: rgb(166, 242, 193);
+    --white--color: #fff;
+    --black-color: #000;
+    --text-color:#333;
+    --border-color: #dbdbdb;
+}
+
+/*PRODUCT*/
+.category-product-item {
+    background-color: var(--white--color);
+    margin-top: 15px;
+}
+
+.category-product-item__img {
+    padding-top: 100%;
+    background-color: var(--white--color);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+.category-product-item__price-old {
+    font-size: 1.4rem;
+}
+
+.category-product-item__price-new {
+    font-size: 1.6rem;
+    color: red;
+}

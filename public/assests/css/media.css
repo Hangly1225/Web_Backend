@@ -1,0 +1,140 @@
+:root {
+    --primary-color: rgb(166, 242, 193);
+    --white--color: #fff;
+    --black-color: #000;
+    --text-color:#333;
+    --border-color: #dbdbdb;
+}
+
+/*MEDIA*/
+
+/*PC*/
+@media (min-width: 1024px)
+{
+    .title_best_seller {
+        background-color: var(--primary-color);
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        color: black;
+        text-align: center;
+        position: sticky;
+    }
+}
+
+/*IPHONE*/
+@media (max-width: 740px) {
+    .title_best_seller {
+        background-color: var(--primary-color);
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        color: rgb(246, 6, 6);
+        text-align: center;
+        position: sticky;
+    }
+    /*CATEGORY*/
+    .header_nav ul {
+        background-color: white;
+        padding: auto;
+        display: flex;
+        justify-content: space-between;
+        line-height: 50px;
+        text-indent: 10px;
+    }
+    
+    .grid {
+        width: 1000px;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    
+    .grid__full-width {
+        width: 100%;
+    }
+    
+    .grid__row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+    
+    .grid__column-2 {
+        padding-left: 10px;
+        padding-right: 10px;
+        width: 30%;
+    }
+    
+    .grid__column-8 {
+        padding-left: 10px;
+        padding-right: 10px;
+        width: 70%;
+    }
+    
+    .grid__column-2-4 {
+        padding-left: 5px;
+        padding-right: 5px;
+        width: 55%;
+    }
+    
+    .category {
+        top: 410px;
+        background-color: var(--white--color);
+        position: absolute;
+    }  
+}
+
+/*IPAD*/
+@media (min-width: 740px) and (max-width: 1023px) {
+    :root {
+        --primary-color: rgb(166, 242, 193);
+        --white--color: #fff;
+        --black-color: #000;
+        --text-color:#333;
+        --border-color: #dbdbdb;
+    }
+    
+    /*CATEGORY*/
+    .grid {
+        width: 1000px;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    
+    .grid__full-width {
+        width: 100%;
+    }
+    
+    .grid__row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+    
+    .grid__column-2 {
+        padding-left: 10px;
+        padding-right: 10px;
+        width: 20%;
+    }
+    
+    .grid__column-8 {
+        padding-left: 10px;
+        padding-right: 10px;
+        width: 80%;
+    }
+    
+    .grid__column-2-4 {
+        padding-left: 5px;
+        padding-right: 5px;
+        width: 33%;
+    }
+    
+    .category {
+        left: 10px;
+        top: 410px;
+        background-color: var(--white--color);
+        position: absolute;
+    }  
+}
