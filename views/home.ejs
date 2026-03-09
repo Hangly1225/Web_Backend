@@ -1,15 +1,28 @@
-<%- include('partials/header') %>
+<!doctype html>
+<html lang="en">
+  <head>
+    <%- include('partials/shared-head', { pageTitle }) %>
+  </head>
+  <body>
+    <%- include('partials/header', { menuItems, isAuthenticated, userName }) %>
+    <main class="container" style="padding: 24px 40px;">
+      <h2>Featured products</h2>
+      <p>
+        Session state:
+        <% if (isAuthenticated) { %>
+          <strong>Authorized</strong>
+        <% } else { %>
+          <strong>Unauthorized</strong>
+        <% } %>
+      </p>
+      <section style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;">
+        <% products.forEach((product) => { %>
+          <%- include('partials/product-card', { product }) %>
+        <% }) %>
+      </section>
+    </main>
 
-<h2>Home page</h2>
-<% if (user) { %>
-  Logged in as <%= user %>
-  <a href="/logout">Log out</a>
-<% } else { %>
-  <form action="/login" method="post">
-    <input name="username">
-    <input name="password" type="password">
-    <button>Login</button>
-  </form>
-<% } %>
-
-<%- include('partials/footer') %>
+    <%- include('partials/footer') %>
+    <%- include('partials/shared-scripts') %>
+  </body>
+</html>

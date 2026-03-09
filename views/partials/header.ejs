@@ -1,4 +1,16 @@
-<header>
-<h1>My Website</h1>
-<hr>
+<header style="padding: 20px 40px; border-bottom: 1px solid #ddd;">
+  <h1>Watch Store</h1>
+  <nav style="display: flex; gap: 12px; margin: 10px 0;">
+    <% menuItems.forEach((item) => { %>
+      <a href="<%= item.href %>"><%= item.label %></a>
+    <% }) %>
+  </nav>
+
+  <div>
+    <% if (isAuthenticated) { %>
+      You are logged in as <strong><%= userName %></strong>. <a href="/logout">Sign out</a>
+    <% } else { %>
+      Guest mode. <form action="/login" method="post" style="display:inline;"><button type="submit">Sign in</button></form> / <a href="/signin.html">Register</a>
+    <% } %>
+  </div>
 </header>

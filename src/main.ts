@@ -5,23 +5,23 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as session from 'express-session';
 
 async function bootstrap() {
-
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // view engine
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setBaseViewsDir(join(process.cwd(), 'views'));
   app.setViewEngine('ejs');
 
   // session
   app.use(
     session({
-      secret: 'secret-key',
+      secret: process.env.SESSION_SECRET || 'dev-secret',
       resave: false,
       saveUninitialized: false,
     }),
   );
 
-  await app.listen(3000);
+  const port = Number(process.env.PORT) || 3000;
+  await app.listen(port);
 }
 
 bootstrap();

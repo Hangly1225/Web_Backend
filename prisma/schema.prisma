@@ -14,54 +14,84 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  name      String
-  posts     Post[]
-  comments  Comment[]
-  likes     Like[]
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  fullName  String
+  createdAt DateTime   @default(now())
+
+  orders    Order[]
+  cartItems CartItem[]
 }
 
-model Post {
-  id        Int       @id @default(autoincrement())
-  title     String
-  content   String
-  authorId  Int
-  author    User      @relation(fields: [authorId], references: [id])
-  comments  Comment[]
-  likes     Like[]
-  categories PostCategory[]
-}
+model Brand {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
 
-model Comment {
-  id       Int    @id @default(autoincrement())
-  text     String
-  userId   Int
-  postId   Int
-  user     User   @relation(fields: [userId], references: [id])
-  post     Post   @relation(fields: [postId], references: [id])
+  products Product[]
 }
 
 model Category {
-  id      Int           @id @default(autoincrement())
-  name    String
-  posts   PostCategory[]
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+
+  products Product[]
 }
 
-model PostCategory {
-  postId      Int
+model Product {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String
+  price       Decimal     @db.Decimal(10, 2)
+  stock       Int
+  brandId     Int
   categoryId  Int
-  post        Post      @relation(fields: [postId], references: [id])
-  category    Category  @relation(fields: [categoryId], references: [id])
-
-  @@id([postId, categoryId])
+  brand       Brand       @relation(fields: [brandId], references: [id])
+  category    Category    @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]
+  cartItems   CartItem[]
 }
 
-model Like {
-  id      Int @id @default(autoincrement())
-  userId  Int
-  postId  Int
-  user    User @relation(fields: [userId], references: [id])
-  post    Post @relation(fields: [postId], references: [id])
+model Order {
+  id         Int          @id @default(autoincrement())
+  userId     Int
+  status     OrderStatus  @default(PENDING)
+  createdAt  DateTime     @default(now())
+
+  user       User         @relation(fields: [userId], references: [id])
+  items      OrderItem[]
 }
+
+model OrderItem {
+  id         Int      @id @default(autoincrement())
+  orderId    Int
+  productId  Int
+  quantity   Int
+  unitPrice  Decimal  @db.Decimal(10, 2)
+
+  order      Order    @relation(fields: [orderId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+
+  @@unique([orderId, productId])
+}
+
+model CartItem {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  productId  Int
+  quantity   Int
+
+  user       User     @relation(fields: [userId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+}
+
