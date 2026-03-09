@@ -8,7 +8,6 @@ interface ProductCard {
 
 @Controller()
 export class HomeController {
-
   @Get()
   @Render('home')
   root(@Req() req) {
