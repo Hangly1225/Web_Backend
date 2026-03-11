@@ -23,7 +23,7 @@ export class HomeController {
     ];
 
     return {
-      pageTitle: 'Web Backend Lab 1',
+      pageTitle: 'Web cua Hang Ly',
       isAuthenticated,
       userName: isAuthenticated ? req.session.user : null,
       menuItems: [
