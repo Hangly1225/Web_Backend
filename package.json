@@ -28,7 +28,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/serve-static": "^5.0.4",
-    "@prisma/client": "^6.19.2",
+    "@prisma/client": "^7.4.2",
     "ejs": "^5.0.1",
     "express-session": "^1.19.0",
     "pg": "^8.20.0",
