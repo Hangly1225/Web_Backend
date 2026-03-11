@@ -21,7 +21,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "start:render": "npm run build && npm run start:prod"
+    "start:render": "npm run build && npm run start:prod",
+    "db:generate": "prisma generate",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "postinstall": "node scripts/patch-prisma-runtime.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
