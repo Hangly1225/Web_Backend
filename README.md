@@ -38,5 +38,6 @@ $ npm run start:dev
 $ npm run start:prod
 
 ## database setup
-Generate Prisma client: npx prisma generate
-Create/apply migrations: npx prisma migrate dev --name init
+$ npx prisma generate
+
+$ npx prisma migrate dev --name init
