@@ -27,14 +27,14 @@ Required variables:
 - `SESSION_SECRET`: secret for session cookie signing
 - `DATABASE_URL`: PostgreSQL connection string
 
-## Install
-# development
+# Install
+## development
 $ npm run start
 
 # watch mode
 $ npm run start:dev
 
-# production mode
+## production mode
 $ npm run start:prod
 
 ## Database setup
