@@ -1,0 +1,40 @@
+<%- include('../partials/head', { title: 'Products' }) %>
+<%- include('../partials/header', { user: null }) %>
+<main>
+  <h3>Products</h3>
+  <div id="toast" class="toast"></div>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Name</th><th>Price</th><th>Stock</th><th>Brand</th><th>Category</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <% products.forEach(function(p) { %>
+        <tr>
+          <td><%= p.id %></td>
+          <td><a href="/products/<%= p.id %>"><%= p.name %></a></td>
+          <td><%= p.price %></td>
+          <td><%= p.stock %></td>
+          <td><%= p.brand?.name %></td>
+          <td><%= p.category?.name %></td>
+          <td>
+            <a href="/products/<%= p.id %>/edit">Edit</a>
+            <form class="inline" action="/products/<%= p.id %>/delete" method="post">
+              <button type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</main>
+<script>
+  const toast = document.getElementById('toast');
+  const sse = new EventSource('/products/events');
+  sse.onmessage = (evt) => {
+    const payload = JSON.parse(evt.data);
+    toast.style.display = 'block';
+    toast.textContent = `Product ${payload.type}: #${payload.productId} ${payload.name}`;
+    setTimeout(() => { toast.style.display = 'none'; }, 3000);
+  };
+</script>
+<%- include('../partials/footer') %>

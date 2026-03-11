@@ -1,0 +1,1 @@
+export { PagesController } from './pages.controller';

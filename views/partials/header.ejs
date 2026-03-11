@@ -1,16 +1,20 @@
 <header style="padding: 20px 40px; border-bottom: 1px solid #ddd;">
   <h1>Watch Store</h1>
-  <nav style="display: flex; gap: 12px; margin: 10px 0;">
-    <% menuItems.forEach((item) => { %>
-      <a href="<%= item.href %>"><%= item.label %></a>
-    <% }) %>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/index">Index</a>
+    <a href="/shop">Shop</a>
+    <a href="/cart">Cart</a>
+    <a href="/brand">Brand</a>
+    <a href="/category">Category</a>
+    <a href="/list">List</a>
+    <a href="/products">Products</a>
   </nav>
-
   <div>
-    <% if (isAuthenticated) { %>
-      You are logged in as <strong><%= userName %></strong>. <a href="/logout">Sign out</a>
+    <% if (user) { %>
+      Logged in as <strong><%= user %></strong> | <a href="/logout">Logout</a>
     <% } else { %>
-      Guest mode. <form action="/login" method="post" style="display:inline;"><button type="submit">Sign in</button></form> / <a href="/signin.html">Register</a>
+      <a href="/login">Login</a> | <a href="/signin">Signin</a>
     <% } %>
   </div>
 </header>

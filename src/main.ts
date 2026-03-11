@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as session from 'express-session';
+import { AppModule } from './app.module';
+import { PrismaService } from './prisma/prisma.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -14,13 +15,20 @@ async function bootstrap() {
   // session
   app.use(
     session({
-      secret: process.env.SESSION_SECRET || 'dev-secret',
+      secret: process.env.SESSION_SECRET ?? 'dev-session-secret',
       resave: false,
       saveUninitialized: false,
+      cookie: {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000 * 60 * 60,
+      },
     }),
   );
 
-  const port = Number(process.env.PORT) || 3000;
+  const parsedPort = Number.parseInt(process.env.PORT ?? '3000', 10);
+  const port = Number.isNaN(parsedPort) ? 3000 : parsedPort;
   await app.listen(port);
 }
 

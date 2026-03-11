@@ -1,0 +1,19 @@
+<%- include('../partials/head', { title: 'Add product' }) %>
+<%- include('../partials/header', { user: null }) %>
+<main>
+  <h3>Add product</h3>
+  <form action="/products" method="post">
+    <input name="name" placeholder="name" required />
+    <input name="description" placeholder="description" required />
+    <input name="price" type="number" step="0.01" placeholder="price" required />
+    <input name="stock" type="number" min="0" placeholder="stock" required />
+    <select name="brandId" required>
+      <% brands.forEach(function(b){ %><option value="<%= b.id %>"><%= b.name %></option><% }) %>
+    </select>
+    <select name="categoryId" required>
+      <% categories.forEach(function(c){ %><option value="<%= c.id %>"><%= c.name %></option><% }) %>
+    </select>
+    <button type="submit">Create</button>
+  </form>
+</main>
+<%- include('../partials/footer') %>

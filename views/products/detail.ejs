@@ -1,0 +1,18 @@
+<%- include('../partials/head', { title: 'Product detail' }) %>
+<%- include('../partials/header', { user: null }) %>
+<main>
+  <% if (!product) { %>
+    <h3>Product not found</h3>
+  <% } else { %>
+    <h3><%= product.name %></h3>
+    <p><%= product.description %></p>
+    <ul>
+      <li>Price: <%= product.price %></li>
+      <li>Stock: <%= product.stock %></li>
+      <li>Brand: <%= product.brand?.name %></li>
+      <li>Category: <%= product.category?.name %></li>
+    </ul>
+    <a href="/products/<%= product.id %>/edit">Edit</a>
+  <% } %>
+</main>
+<%- include('../partials/footer') %>
