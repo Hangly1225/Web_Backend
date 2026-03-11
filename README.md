@@ -31,12 +31,12 @@ Required variables:
 ## development
 $ npm run start
 
-# watch mode
+## watch mode
 $ npm run start:dev
 
 ## production mode
 $ npm run start:prod
 
-## Database setup
+## database setup
 Generate Prisma client: npx prisma generate
 Create/apply migrations: npx prisma migrate dev --name init
