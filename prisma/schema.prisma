@@ -21,76 +21,92 @@ enum OrderStatus {
   CANCELLED
 }
 
-model User {
-  id        Int        @id @default(autoincrement())
-  email     String     @unique
-  fullName  String
-  createdAt DateTime   @default(now())
+mmodel User {
+  id        BigInt    @id @default(autoincrement())
+  email     String    @unique
+  username  String
+  password  String
+  createdAt DateTime  @default(now())
 
   orders    Order[]
   cartItems CartItem[]
+
+  @@map("User")
 }
 
 model Brand {
-  id       Int       @id @default(autoincrement())
-  name     String    @unique
+  id         BigInt     @id @default(autoincrement())
+  name       String     @unique
 
-  products Product[]
+  categories Category[]
+
+  @@map("Brand")
 }
 
 model Category {
-  id       Int       @id @default(autoincrement())
-  name     String    @unique
+  id         BigInt     @id @default(autoincrement())
+  name       String
+  brandId    BigInt
 
-  products Product[]
+  brand      Brand      @relation(fields: [brandId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  products   Product[]
+
+  @@unique([brandId, name])
+  @@map("Category")
 }
 
 model Product {
-  id          Int         @id @default(autoincrement())
+  id          BigInt      @id @default(autoincrement())
   name        String
   description String
   price       Decimal     @db.Decimal(10, 2)
   stock       Int
-  brandId     Int
-  categoryId  Int
-  brand       Brand       @relation(fields: [brandId], references: [id])
-  category    Category    @relation(fields: [categoryId], references: [id])
+  categoryId  BigInt
+  createdAt   DateTime    @default(now())
+
+  category    Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   orderItems  OrderItem[]
   cartItems   CartItem[]
+
+  @@map("Product")
 }
 
 model Order {
-  id         Int          @id @default(autoincrement())
-  userId     Int
+  id         BigInt       @id @default(autoincrement())
+  userId     BigInt
   status     OrderStatus  @default(PENDING)
   createdAt  DateTime     @default(now())
 
-  user       User         @relation(fields: [userId], references: [id])
+  user       User         @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   items      OrderItem[]
+
+  @@map("Order")
 }
 
 model OrderItem {
-  id         Int      @id @default(autoincrement())
-  orderId    Int
-  productId  Int
+  id         BigInt      @id @default(autoincrement())
+  orderId    BigInt
+  productId  BigInt
   quantity   Int
-  unitPrice  Decimal  @db.Decimal(10, 2)
+  unitPrice  Decimal     @db.Decimal(10, 2)
 
-  order      Order    @relation(fields: [orderId], references: [id])
-  product    Product  @relation(fields: [productId], references: [id])
+  order      Order       @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   @@unique([orderId, productId])
+  @@map("OrderItem")
 }
 
 model CartItem {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  productId  Int
+  id         BigInt      @id @default(autoincrement())
+  userId     BigInt
+  productId  BigInt
   quantity   Int
 
-  user       User     @relation(fields: [userId], references: [id])
-  product    Product  @relation(fields: [productId], references: [id])
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([userId, productId])
+  @@map("CartItem")
 }
 
