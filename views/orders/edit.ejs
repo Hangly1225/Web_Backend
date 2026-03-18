@@ -1,0 +1,25 @@
+<%- include('../partials/head', { title: 'Edit order' }) %>
+<%- include('../partials/header') %>
+<main>
+  <h3>Edit order #<%= order.id %></h3>
+  <form action="/orders/<%= order.id %>/edit" method="post">
+    <label>User</label>
+    <select name="userId" required>
+      <% users.forEach(function(user) { %>
+        <option value="<%= user.id %>" <%= user.id === order.userId ? 'selected' : '' %>>
+          <%= user.username %> (<%= user.email %>)
+        </option>
+      <% }) %>
+    </select>
+
+    <label>Status</label>
+    <select name="status" required>
+      <% statuses.forEach(function(status) { %>
+        <option value="<%= status %>" <%= status === order.status ? 'selected' : '' %>><%= status %></option>
+      <% }) %>
+    </select>
+
+    <button type="submit">Save</button>
+  </form>
+</main>
+<%- include('../partials/footer') %>

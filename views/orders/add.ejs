@@ -1,0 +1,23 @@
+<%- include('../partials/head', { title: 'Add order' }) %>
+<%- include('../partials/header') %>
+<main>
+  <h3>Create order</h3>
+  <form action="/orders" method="post">
+    <label>User</label>
+    <select name="userId" required>
+      <% users.forEach(function(user) { %>
+        <option value="<%= user.id %>"><%= user.username %> (<%= user.email %>)</option>
+      <% }) %>
+    </select>
+
+    <label>Status</label>
+    <select name="status" required>
+      <% statuses.forEach(function(status) { %>
+        <option value="<%= status %>"><%= status %></option>
+      <% }) %>
+    </select>
+
+    <button type="submit">Create</button>
+  </form>
+</main>
+<%- include('../partials/footer') %>

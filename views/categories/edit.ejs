@@ -1,0 +1,17 @@
+<%- include('../partials/head', { title: 'Edit category' }) %>
+<%- include('../partials/header') %>
+<main>
+  <h3>Edit category #<%= category.id %></h3>
+  <form action="/categories/<%= category.id %>/edit" method="post">
+    <input name="name" value="<%= category.name %>" required />
+    <select name="brandId" required>
+      <% brands.forEach(function(brand) { %>
+        <option value="<%= brand.id %>" <%= brand.id === category.brandId ? 'selected' : '' %>>
+          <%= brand.name %>
+        </option>
+      <% }) %>
+    </select>
+    <button type="submit">Save</button>
+  </form>
+</main>
+<%- include('../partials/footer') %>

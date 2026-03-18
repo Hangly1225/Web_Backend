@@ -6,6 +6,12 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   findAll() {
-    return this.prisma.user.findMany({ orderBy: { id: 'desc' } });
+    return this.prisma.user.findMany({
+      include: {
+        orders: true,
+        cartItems: true,
+      },
+      orderBy: { id: 'desc' },
+    });
   }
 }

@@ -1,0 +1,33 @@
+<%- include('../partials/head', { title: 'Order detail' }) %>
+<%- include('../partials/header') %>
+<main>
+  <h3>Order #<%= order.id %></h3>
+  <ul>
+    <li>User: <%= order.user?.username %> (<%= order.user?.email %>)</li>
+    <li>Status: <%= order.status %></li>
+    <li>Created: <%= order.createdAt %></li>
+  </ul>
+
+  <h4>Items</h4>
+  <% if (order.items.length === 0) { %>
+    <p>This order does not have items yet.</p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr><th>Product</th><th>Quantity</th><th>Unit price</th></tr>
+      </thead>
+      <tbody>
+        <% order.items.forEach(function(item) { %>
+          <tr>
+            <td><%= item.product?.name %></td>
+            <td><%= item.quantity %></td>
+            <td><%= item.unitPrice %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+
+  <p><a href="/orders/<%= order.id %>/edit">Edit order</a></p>
+</main>
+<%- include('../partials/footer') %>

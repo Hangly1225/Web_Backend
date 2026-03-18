@@ -1,5 +1,5 @@
 <%- include('../partials/head', { title: 'Product detail' }) %>
-<%- include('../partials/header', { user: null }) %>
+<%- include('../partials/header') %>
 <main>
   <% if (!product) { %>
     <h3>Product not found</h3>
@@ -9,7 +9,7 @@
     <ul>
       <li>Price: <%= product.price %></li>
       <li>Stock: <%= product.stock %></li>
-      <li>Brand: <%= product.brand?.name %></li>
+      <li>Brand: <%= product.category?.brand?.name %></li>
       <li>Category: <%= product.category?.name %></li>
     </ul>
     <a href="/products/<%= product.id %>/edit">Edit</a>

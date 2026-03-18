@@ -2,17 +2,16 @@
   <h1>Watch Store</h1>
   <nav>
     <a href="/">Home</a>
-    <a href="/index">Index</a>
-    <a href="/shop">Shop</a>
-    <a href="/cart">Cart</a>
-    <a href="/brand">Brand</a>
-    <a href="/category">Category</a>
-    <a href="/list">List</a>
+    <a href="/brands">Brands</a>
+    <a href="/categories">Categories</a>
     <a href="/products">Products</a>
+    <a href="/orders">Orders</a>
+    <a href="/users">Users</a>
+    <a href="/shop">Shop</a>
   </nav>
   <div>
-    <% if (user) { %>
-      Logged in as <strong><%= user %></strong> | <a href="/logout">Logout</a>
+    <% if (currentUser) { %>
+      Logged in as <strong><%= currentUser %></strong> | <a href="/logout">Logout</a>
     <% } else { %>
       <a href="/login">Login</a> | <a href="/signin">Signin</a>
     <% } %>

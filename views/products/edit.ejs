@@ -1,5 +1,5 @@
 <%- include('../partials/head', { title: 'Edit product' }) %>
-<%- include('../partials/header', { user: null }) %>
+<%- include('../partials/header') %>
 <main>
   <h3>Edit product #<%= product.id %></h3>
   <form action="/products/<%= product.id %>/edit" method="post">
@@ -7,11 +7,6 @@
     <input name="description" value="<%= product.description %>" required />
     <input name="price" type="number" step="0.01" value="<%= product.price %>" required />
     <input name="stock" type="number" min="0" value="<%= product.stock %>" required />
-    <select name="brandId" required>
-      <% brands.forEach(function(b){ %>
-        <option value="<%= b.id %>" <%= b.id === product.brandId ? 'selected' : '' %>><%= b.name %></option>
-      <% }) %>
-    </select>
     <select name="categoryId" required>
       <% categories.forEach(function(c){ %>
         <option value="<%= c.id %>" <%= c.id === product.categoryId ? 'selected' : '' %>><%= c.name %></option>

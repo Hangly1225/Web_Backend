@@ -1,0 +1,10 @@
+<%- include('../partials/head', { title: 'Add brand' }) %>
+<%- include('../partials/header') %>
+<main>
+  <h3>Add brand</h3>
+  <form action="/brands" method="post">
+    <input name="name" placeholder="Brand name" required />
+    <button type="submit">Create</button>
+  </form>
+</main>
+<%- include('../partials/footer') %>

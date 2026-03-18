@@ -1,0 +1,15 @@
+<%- include('../partials/head', { title: 'Add category' }) %>
+<%- include('../partials/header') %>
+<main>
+  <h3>Add category</h3>
+  <form action="/categories" method="post">
+    <input name="name" placeholder="Category name" required />
+    <select name="brandId" required>
+      <% brands.forEach(function(brand) { %>
+        <option value="<%= brand.id %>"><%= brand.name %></option>
+      <% }) %>
+    </select>
+    <button type="submit">Create</button>
+  </form>
+</main>
+<%- include('../partials/footer') %>

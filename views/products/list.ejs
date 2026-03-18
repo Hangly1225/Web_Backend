@@ -1,5 +1,5 @@
 <%- include('../partials/head', { title: 'Products' }) %>
-<%- include('../partials/header', { user: null }) %>
+<%- include('../partials/header') %>
 <main>
   <h3>Products</h3>
   <div id="toast" class="toast"></div>
@@ -14,7 +14,7 @@
           <td><a href="/products/<%= p.id %>"><%= p.name %></a></td>
           <td><%= p.price %></td>
           <td><%= p.stock %></td>
-          <td><%= p.brand?.name %></td>
+          <td><%= p.category?.brand?.name %></td>
           <td><%= p.category?.name %></td>
           <td>
             <a href="/products/<%= p.id %>/edit">Edit</a>

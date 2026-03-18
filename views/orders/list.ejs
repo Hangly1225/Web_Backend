@@ -1,0 +1,28 @@
+<%- include('../partials/head', { title: 'Orders' }) %>
+<%- include('../partials/header') %>
+<main>
+  <h3>Orders</h3>
+  <p><a href="/orders/add">Create order</a></p>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>User</th><th>Status</th><th>Items</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <% orders.forEach(function(order) { %>
+        <tr>
+          <td><a href="/orders/<%= order.id %>">#<%= order.id %></a></td>
+          <td><%= order.user?.username || order.user?.email %></td>
+          <td><%= order.status %></td>
+          <td><%= order.items.length %></td>
+          <td>
+            <a href="/orders/<%= order.id %>/edit">Edit</a>
+            <form class="inline" action="/orders/<%= order.id %>/delete" method="post">
+              <button type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</main>
+<%- include('../partials/footer') %>

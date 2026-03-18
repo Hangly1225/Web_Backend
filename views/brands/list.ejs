@@ -1,0 +1,27 @@
+<%- include('../partials/head', { title: 'Brands' }) %>
+<%- include('../partials/header') %>
+<main>
+  <h3>Brands</h3>
+  <p><a href="/brands/add">Add brand</a></p>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Name</th><th>Categories</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <% brands.forEach(function(brand) { %>
+        <tr>
+          <td><%= brand.id %></td>
+          <td><a href="/brands/<%= brand.id %>"><%= brand.name %></a></td>
+          <td><%= brand.categories.length %></td>
+          <td>
+            <a href="/brands/<%= brand.id %>/edit">Edit</a>
+            <form class="inline" action="/brands/<%= brand.id %>/delete" method="post">
+              <button type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</main>
+<%- include('../partials/footer') %>

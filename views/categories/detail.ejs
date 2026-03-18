@@ -1,0 +1,18 @@
+<%- include('../partials/head', { title: 'Category detail' }) %>
+<%- include('../partials/header') %>
+<main>
+  <h3><%= category.name %></h3>
+  <p>Brand: <a href="/brands/<%= category.brand.id %>"><%= category.brand.name %></a></p>
+
+  <h4>Products</h4>
+  <% if (category.products.length > 0) { %>
+    <ul>
+      <% category.products.forEach(function(product) { %>
+        <li><a href="/products/<%= product.id %>"><%= product.name %></a></li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <p>This category does not have products yet.</p>
+  <% } %>
+</main>
+<%- include('../partials/footer') %>
