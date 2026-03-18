@@ -17,7 +17,7 @@ export class HomeController {
       {
         title: 'Classic Bracelet',
         price: '$79',
-        image: '/assests/imgs/Classic Bracelet.webp',
+        image: '/assets/imgs/Classic Bracelet.webp',
       },
       { title: 'Elegant Ring', price: '$49', image: '/assets/imgs/item3.webp' },
     ];
