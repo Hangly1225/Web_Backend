@@ -6,12 +6,13 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
   app.set('trust proxy', 1);
 
+  // view engine
   app.setBaseViewsDir(join(process.cwd(), 'views'));
   app.setViewEngine('ejs');
 
+  // session
   app.use(
     session({
       secret: process.env.SESSION_SECRET ?? 'dev-session-secret',
@@ -33,5 +34,7 @@ async function bootstrap() {
 
   const parsedPort = Number.parseInt(process.env.PORT ?? '3000', 10);
   const port = Number.isNaN(parsedPort) ? 3000 : parsedPort;
-  await app.listen(port, '0.0.0.0');
+  await app.listen(process.env.PORT || 3000, '0.0.0.0');
 }
+
+bootstrap();
