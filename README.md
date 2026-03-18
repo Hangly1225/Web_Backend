@@ -1,4 +1,3 @@
-
 ## Author: Nguyen Thi Hang Ly
 ## Group: M3309
 ## Live demo
@@ -19,6 +18,13 @@ Main entities:
 - Order
 - OrderItem
 - CartItem
+
+Core relations:
+- One **Brand** has many **Category** records.
+- One **Category** belongs to one **Brand** and has many **Product** records.
+- One **Product** belongs to one **Category**.
+- One **User** has many **Order** and **CartItem** records.
+- **OrderItem** links **Order** and **Product**.
 
 Relations are defined in `prisma/schema.prisma` and visualized in ERD:
 

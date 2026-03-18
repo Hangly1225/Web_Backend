@@ -15,8 +15,8 @@ import {
   import { Response } from 'express';
   import { map, Observable } from 'rxjs';
   import { PrismaService } from '../prisma/prisma.service';
-  import { CreateProductDto } from './dto/create-product.dto';
-  import { UpdateProductDto } from './dto/update-product.dto';
+  import { CreateProductDto } from './dto/create-products.dto';
+  import { UpdateProductDto } from './dto/update-products.dto';
   import { ProductsService } from './products.service';
   
   @Controller('products')
@@ -117,7 +117,6 @@ import {
         description: body.description,
         price: Number(body.price),
         stock: Number(body.stock),
-        brandId: Number(body.brandId),
         categoryId: Number(body.categoryId),
       };
     }
@@ -128,8 +127,8 @@ import {
         description: body.description,
         price: Number(body.price),
         stock: Number(body.stock),
-        brandId: Number(body.brandId),
         categoryId: Number(body.categoryId),
+        updatedAt: new Date(),
       };
     }
   
@@ -137,7 +136,7 @@ import {
       if (!dto.name || !dto.description) {
         throw new BadRequestException('name and description are required');
       }
-      if (dto.price <= 0 || dto.stock < 0 || dto.brandId <= 0 || dto.categoryId <= 0) {
+      if (dto.price <= 0 || dto.stock < 0 || dto.categoryId <= 0) {
         throw new BadRequestException('invalid numeric fields');
       }
     }

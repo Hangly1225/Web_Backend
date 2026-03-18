@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Subject } from 'rxjs';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { CreateProductDto } from './dto/create-products.dto';
+import { UpdateProductDto } from './dto/update-products.dto';
 
 @Injectable()
 export class ProductsService {
@@ -15,11 +15,11 @@ export class ProductsService {
   }
 
   findAll() {
-    return this.prisma.product.findMany({ include: { brand: true, category: true }, orderBy: { id: 'desc' } });
+    return this.prisma.product.findMany({ include: { category: true }, orderBy: { id: 'desc' } });
   }
 
   findOne(id: number) {
-    return this.prisma.product.findUnique({ where: { id }, include: { brand: true, category: true } });
+    return this.prisma.product.findUnique({ where: { id }, include: { category: true } });
   }
 
   async create(dto: CreateProductDto) {
@@ -35,7 +35,6 @@ export class ProductsService {
   async update(id: number, dto: UpdateProductDto) {
     const data: any = {
       ...dto,
-      ...(dto.brandId !== undefined ? { brand: { connect: { id: dto.brandId } } } : {}),
       ...(dto.categoryId !== undefined ? { category: { connect: { id: dto.categoryId } } } : {}),
     };
     const updated = await this.prisma.product.update({ where: { id }, data });
