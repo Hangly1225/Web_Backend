@@ -28,9 +28,10 @@ export class HomeController {
       userName: isAuthenticated ? req.session.user : null,
       menuItems: [
         { label: 'Home', href: '/' },
-        { label: 'Catalog', href: '/list.html' },
-        { label: 'Categories', href: '/category.html' },
-        { label: 'Cart', href: '/cart.html' },
+        { label: 'Products', href: '/products' },
+        { label: 'Brands', href: '/brands' },
+        { label: 'Categories', href: '/categories' },
+        { label: 'Orders', href: '/orders' },
       ],
       products,
     };

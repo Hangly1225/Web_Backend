@@ -3,7 +3,6 @@ import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as session from 'express-session';
 import { AppModule } from './app.module';
-import { PrismaService } from './prisma/prisma.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -26,6 +25,11 @@ async function bootstrap() {
       },
     }),
   );
+
+  app.use((req: any, res: any, next: () => void) => {
+    res.locals.user = req.session?.user ?? null;
+    next();
+  });
 
   const parsedPort = Number.parseInt(process.env.PORT ?? '3000', 10);
   const port = Number.isNaN(parsedPort) ? 3000 : parsedPort;

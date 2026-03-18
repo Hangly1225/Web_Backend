@@ -9,6 +9,7 @@ import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 import { BrandsModule } from './brands/brands.module';
 import { UsersModule } from './users/users.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UsersModule } from './users/users.module';
     CategoriesModule,
     BrandsModule,
     UsersModule,
+    OrdersModule,
   ],
   controllers: [HomeController, AuthController, PagesController],
   providers: [PrismaService],
