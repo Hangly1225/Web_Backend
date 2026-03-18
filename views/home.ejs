@@ -1,26 +1,30 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <%- include('partials/shared-head', { pageTitle }) %>
+    <%- include('partials/shared-head', { 
+      pageTitle: typeof pageTitle !== 'undefined' ? pageTitle : 'Home'
+    }) %>
   </head>
   <body>
     <%- include('partials/header', { 
-      menuItems: menuItems || [], 
-      isAuthenticated: isAuthenticated || false, 
-      userName: userName || '' 
+      menuItems: typeof menuItems !== 'undefined' ? menuItems : [], 
+      isAuthenticated: typeof isAuthenticated !== 'undefined' ? isAuthenticated : false, 
+      userName: typeof userName !== 'undefined' ? userName : '' 
     }) %>
+
     <main class="container" style="padding: 24px 40px;">
       <h2>Featured products</h2>
       <p>
         Session state:
-        <% if (isAuthenticated) { %>
+        <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
           <strong>Authorized</strong>
         <% } else { %>
           <strong>Unauthorized</strong>
         <% } %>
       </p>
+
       <section style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;">
-        <% products.forEach((product) => { %>
+        <% (typeof products !== 'undefined' ? products : []).forEach((product) => { %>
           <%- include('partials/product-card', { product }) %>
         <% }) %>
       </section>

@@ -13,19 +13,19 @@ export class HomeController {
   root(@Req() req) {
     const isAuthenticated = Boolean(req.session?.user);
     const products: ProductCard[] = [
-      { title: 'Pearl Earrings', price: '$59', image: '/assests/imgs/item1.webp' },
+      { title: 'Pearl Earrings', price: '$59', image: '/assets/imgs/item1.webp' },
       {
         title: 'Classic Bracelet',
         price: '$79',
         image: '/assests/imgs/Classic Bracelet.webp',
       },
-      { title: 'Elegant Ring', price: '$49', image: '/assests/imgs/item3.webp' },
+      { title: 'Elegant Ring', price: '$49', image: '/assets/imgs/item3.webp' },
     ];
 
     return {
       pageTitle: 'Web cua Hang Ly',
       isAuthenticated,
-      userName: isAuthenticated ? req.session.user : null,
+      userName: isAuthenticated ? req.session.user : ' ',
       menuItems: [
         { label: 'Home', href: '/' },
         { label: 'Products', href: '/products' },
