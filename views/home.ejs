@@ -4,7 +4,11 @@
     <%- include('partials/shared-head', { pageTitle }) %>
   </head>
   <body>
-    <%- include('partials/header', { menuItems, isAuthenticated, userName }) %>
+    <%- include('partials/header', { 
+      menuItems: menuItems || [], 
+      isAuthenticated: isAuthenticated || false, 
+      userName: userName || '' 
+    }) %>
     <main class="container" style="padding: 24px 40px;">
       <h2>Featured products</h2>
       <p>
