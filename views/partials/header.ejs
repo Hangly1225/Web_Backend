@@ -12,10 +12,15 @@
   </nav>
 
   <div>
-    <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+    <!-- <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
       Logged in as 
       <strong><%= typeof userName !== 'undefined' ? userName : '' %></strong> 
       | <a href="/logout">Logout</a>
+    <% } else { %>
+      <a href="/login">Login</a> | <a href="/signin">Signin</a>
+    <% } %> -->
+    <% if (user) { %>
+      Logged in as <strong><%= user %></strong> | <a href="/logout">Logout</a>
     <% } else { %>
       <a href="/login">Login</a> | <a href="/signin">Signin</a>
     <% } %>
