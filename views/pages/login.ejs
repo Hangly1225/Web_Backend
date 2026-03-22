@@ -1,11 +1,8 @@
-<%- include('../partials/head', { title: 'Login' }) %>
-<%- include('../partials/header', { user }) %>
-<main>
+<%- include('../partials/head', { pageTitle: 'Login', user, menuItems }) %>
   <h3>Login page</h3>
   <form action="/login" method="post">
     <input name="username" placeholder="username" required />
     <input name="password" type="password" placeholder="password" required />
     <button type="submit">Login</button>
   </form>
-</main>
 <%- include('../partials/footer') %>

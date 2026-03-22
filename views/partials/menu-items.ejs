@@ -1,0 +1,5 @@
+<nav>
+    <% (menuItems || []).forEach(function(item) { %>
+      <a href="<%= item.href %>"><%= item.label %></a>
+    <% }) %>
+  </nav>

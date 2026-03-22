@@ -1,40 +1,80 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { join } from 'path';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import * as session from 'express-session';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
+import session, { SessionOptions } from 'express-session';
+import { join } from 'path';
 import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+
+interface AppRequest extends Request {
+  session?: {
+    user?: string;
+  };
+}
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.set('trust proxy', 1);
 
-  // view engine
   app.setBaseViewsDir(join(process.cwd(), 'views'));
   app.setViewEngine('ejs');
 
-  // session
-  app.use(
-    session({
-      secret: process.env.SESSION_SECRET ?? 'dev-session-secret',
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 1000 * 60 * 60,
-      },
+  const sessionFactory = session as unknown as (
+    options: SessionOptions,
+  ) => RequestHandler;
+  const sessionMiddleware = sessionFactory({
+    secret: process.env.SESSION_SECRET ?? 'dev-session-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60,
+    },
+  });
+  app.use(sessionMiddleware);
+
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    const request = req as AppRequest;
+    res.locals.user = request.session?.user ?? null;
+    res.locals.menuItems = [
+      { label: 'Home', href: '/' },
+      { label: 'Products', href: '/products' },
+      { label: 'Brands', href: '/brands' },
+      { label: 'Categories', href: '/categories' },
+      { label: 'Orders', href: '/orders' },
+      { label: 'Users', href: '/users' },
+      { label: 'Swagger', href: '/api/docs' },
+    ];
+  next();
+  });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
     }),
   );
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
-  app.use((req: any, res: any, next: () => void) => {
-    res.locals.user = req.session?.user ?? null;
-    next();
-  });
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Web Backend API')
+    .setDescription(
+      'RESTful API for products, brands, categories, orders and users',
+    )
+    .setVersion('1.0.0')
+    .build();
+  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api/docs', app, swaggerDocument);
 
   const parsedPort = Number.parseInt(process.env.PORT ?? '3000', 10);
   const port = Number.isNaN(parsedPort) ? 3000 : parsedPort;
-  await app.listen(process.env.PORT || 3000, '0.0.0.0');
+  // await app.listen(process.env.PORT || 3000, '0.0.0.0');
+  await app.listen(port, '0.0.0.0');
 }
 
-bootstrap();
+void bootstrap();

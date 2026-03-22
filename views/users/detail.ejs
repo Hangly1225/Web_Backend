@@ -1,0 +1,9 @@
+<%- include('../partials/head', { pageTitle, user, menuItems }) %>
+  <h3>User <%= user.username %></h3>
+  <ul>
+    <li>Email: <%= user.email %></li>
+    <li>Orders: <%= user.orders.length %></li>
+    <li>Cart items: <%= user.cartItems.length %></li>
+  </ul>
+  <p><a href="/users/<%= user.id %>/edit">Edit user</a></p>
+<%- include('../partials/footer') %>

@@ -1,8 +1,8 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Product as ProductModel } from "@prisma/client";
+import { ApiProperty } from '@nestjs/swagger';
+import { Product as ProductModel } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 
-export class Products implements ProductModel{
+export class Products implements ProductModel {
     @ApiProperty()
     id: number;
     @ApiProperty()
@@ -19,4 +19,4 @@ export class Products implements ProductModel{
     createdAt: Date;
     @ApiProperty()
     updatedAt: Date;
-}
+  }

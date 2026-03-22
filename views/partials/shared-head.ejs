@@ -1,6 +1,18 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title><%= pageTitle %></title>
+<title><%= pageTitle || 'Web Backend' %></title>
 <link rel="stylesheet" href="/assets/css/header.css" />
 <link rel="stylesheet" href="/assets/css/footer.css" />
 <link rel="stylesheet" href="/assets/css/main.css" />
+<style>
+  body { font-family: 'Times New Roman', serif; margin: 0; padding: 0; }
+  header, footer { padding: 16px 24px; }
+  nav a { margin-right: 12px; }
+  main { padding: 16px 24px; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #ddd; padding: 8px; }
+  form.inline { display: inline; }
+  .toast { background: #e6ffed; color: #055160; padding: 10px; margin-bottom: 12px; display: none; }
+  label { display: block; margin-top: 8px; }
+  input, select { margin: 6px 0 12px; padding: 6px; min-width: 240px; }
+</style>

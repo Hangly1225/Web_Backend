@@ -1,21 +1,6 @@
-<header style="padding: 20px 40px; border-bottom: 1px solid #ddd;">
+<header style="border-bottom: 1px solid #ddd;">
   <h1>Watch Store</h1>
 
-  <nav>
-    <a href="/">Home</a>
-    <a href="/brands">Brands</a>
-    <a href="/categories">Categories</a>
-    <a href="/products">Products</a>
-    <a href="/orders">Orders</a>
-    <a href="/users">Users</a>
-    <a href="/shop">Shop</a>
-  </nav>
-
-  <div>
-    <% if (user) { %>
-      Logged in as <strong><%= user %></strong> | <a href="/logout">Logout</a>
-    <% } else { %>
-      <a href="/login">Login</a> | <a href="/signin">Signin</a>
-    <% } %>
-  </div>
+  <%- include('menu-items', { menuItems }) %>
+  <%- include('session-info', { user }) %>
 </header>

@@ -1,13 +1,10 @@
-<%- include('../partials/head', { title: 'Order detail' }) %>
-<%- include('../partials/header') %>
-<main>
+<%- include('../partials/head', { pageTitle, user, menuItems }) %>
   <h3>Order #<%= order.id %></h3>
   <ul>
     <li>User: <%= order.user?.username %> (<%= order.user?.email %>)</li>
     <li>Status: <%= order.status %></li>
     <li>Created: <%= order.createdAt %></li>
   </ul>
-
   <h4>Items</h4>
   <% if (order.items.length === 0) { %>
     <p>This order does not have items yet.</p>
@@ -27,7 +24,5 @@
       </tbody>
     </table>
   <% } %>
-
   <p><a href="/orders/<%= order.id %>/edit">Edit order</a></p>
-</main>
 <%- include('../partials/footer') %>

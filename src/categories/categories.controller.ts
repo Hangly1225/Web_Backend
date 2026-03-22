@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -11,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateCategoryDto } from './dto/create-categories.dto';
+import { UpdateCategoryDto } from './dto/update-categories.dto';
 import { CategoriesService } from './categories.service';
 
 @Controller('categories')
@@ -24,27 +25,29 @@ export class CategoriesController {
   @Render('categories/list')
   async findAll() {
     const categories = await this.categoriesService.findAll();
-    return { categories };
+    return { pageTitle: 'Categories', categories };
   }
 
   @Get('add')
   @Render('categories/add')
   async addForm() {
-    const brands = await this.prisma.brand.findMany({ orderBy: { name: 'asc' } });
-    return { brands };
+    const brands = await this.prisma.brand.findMany({
+      orderBy: { name: 'asc' },
+    });
+    return { pageTitle: 'Add category', brands };
   }
 
   @Post()
-  async create(@Body() body: Record<string, string>, @Res() res: Response) {
-    await this.categoriesService.create(this.toDto(body));
-    return res.redirect('/categories');
+  async create(@Body() dto: CreateCategoryDto, @Res() res: Response) {
+      await this.categoriesService.create(dto);
+      return res.redirect('/categories');
   }
 
   @Get(':id')
   @Render('categories/detail')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const category = await this.categoriesService.findOne(id);
-    return { category };
+    return { pageTitle: `Category #${id}`, category };
   }
 
   @Get(':id/edit')
@@ -55,16 +58,16 @@ export class CategoriesController {
       this.prisma.brand.findMany({ orderBy: { name: 'asc' } }),
     ]);
 
-    return { category, brands };
+    return { pageTitle: `Edit category #${id}`, category, brands };
   }
 
   @Post(':id/edit')
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: Record<string, string>,
+    @Body() dto: UpdateCategoryDto,
     @Res() res: Response,
   ) {
-    await this.categoriesService.update(id, this.toDto(body));
+    await this.categoriesService.update(id, dto);
     return res.redirect(`/categories/${id}`);
   }
 
@@ -72,20 +75,5 @@ export class CategoriesController {
   async remove(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     await this.categoriesService.remove(id);
     return res.redirect('/categories');
-  }
-
-  private toDto(body: Record<string, string>) {
-    const name = body.name?.trim();
-    const brandId = Number(body.brandId);
-
-    if (!name) {
-      throw new BadRequestException('name is required');
-    }
-
-    if (Number.isNaN(brandId) || brandId <= 0) {
-      throw new BadRequestException('brandId must be a positive number');
-    }
-
-    return { name, brandId };
   }
 }

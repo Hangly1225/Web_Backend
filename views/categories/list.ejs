@@ -1,6 +1,4 @@
-<%- include('../partials/head', { title: 'Categories' }) %>
-<%- include('../partials/header') %>
-<main>
+<%- include('../partials/head', { pageTitle, user, menuItems }) %>
   <h3>Categories</h3>
   <p><a href="/categories/add">Add category</a></p>
   <table>
@@ -24,5 +22,4 @@
       <% }) %>
     </tbody>
   </table>
-</main>
 <%- include('../partials/footer') %>

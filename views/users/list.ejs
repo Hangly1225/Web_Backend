@@ -1,22 +1,26 @@
-<%- include('../partials/head', { title: 'Users' }) %>
-<%- include('../partials/header') %>
-<main>
+<%- include('../partials/head', { pageTitle, user, menuItems }) %>
   <h3>Users</h3>
+  <p><a href="/users/add">Add user</a></p>
   <table>
     <thead>
-      <tr><th>ID</th><th>Username</th><th>Email</th><th>Orders</th><th>Cart items</th></tr>
+      <tr><th>ID</th><th>Username</th><th>Email</th><th>Orders</th><th>Cart items</th><th>Action</th></tr>
     </thead>
     <tbody>
-      <% users.forEach(function(user) { %>
+      <% users.forEach(function(item) { %>
         <tr>
-          <td><%= user.id %></td>
-          <td><%= user.username %></td>
-          <td><%= user.email %></td>
-          <td><%= user.orders?.length || 0 %></td>
-          <td><%= user.cartItems?.length || 0 %></td>
+          <td><%= item.id %></td>
+          <td><a href="/users/<%= item.id %>"><%= item.username %></a></td>
+          <td><%= item.email %></td>
+          <td><%= item.orders?.length || 0 %></td>
+          <td><%= item.cartItems?.length || 0 %></td>
+          <td>
+            <a href="/users/<%= item.id %>/edit">Edit</a>
+            <form class="inline" action="/users/<%= item.id %>/delete" method="post">
+              <button type="submit">Delete</button>
+            </form>
+          </td>
         </tr>
       <% }) %>
     </tbody>
   </table>
-</main>
 <%- include('../partials/footer') %>

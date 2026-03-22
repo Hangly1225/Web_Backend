@@ -1,7 +1,6 @@
-<%- include('../partials/head', { title: 'Products' }) %>
-<%- include('../partials/header') %>
-<main>
+<%- include('../partials/head', { pageTitle, user, menuItems }) %>
   <h3>Products</h3>
+  <p><a href="/products/add">Add product</a></p>
   <div id="toast" class="toast"></div>
   <table>
     <thead>
@@ -26,15 +25,14 @@
       <% }) %>
     </tbody>
   </table>
-</main>
-<script>
-  const toast = document.getElementById('toast');
-  const sse = new EventSource('/products/events');
-  sse.onmessage = (evt) => {
-    const payload = JSON.parse(evt.data);
-    toast.style.display = 'block';
-    toast.textContent = `Product ${payload.type}: #${payload.productId} ${payload.name}`;
-    setTimeout(() => { toast.style.display = 'none'; }, 3000);
-  };
-</script>
+  <script>
+    const toast = document.getElementById('toast');
+    const sse = new EventSource('/products/events');
+    sse.onmessage = (evt) => {
+      const payload = JSON.parse(evt.data);
+      toast.style.display = 'block';
+      toast.textContent = `Product ${payload.type}: #${payload.productId} ${payload.name}`;
+      setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    };
+  </script>
 <%- include('../partials/footer') %>

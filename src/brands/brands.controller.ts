@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -10,6 +9,8 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { CreateBrandDto } from './dto/create-brands.dto';
+import { UpdateBrandDto } from './dto/update-brands.dto';
 import { BrandsService } from './brands.service';
 
 @Controller('brands')
@@ -20,18 +21,18 @@ export class BrandsController {
   @Render('brands/list')
   async findAll() {
     const brands = await this.brandsService.findAll();
-    return { brands };
+    return { pageTitle: 'Brands', brands };
   }
 
   @Get('add')
   @Render('brands/add')
   addForm() {
-    return {};
+    return { pageTitle: 'Add brand' };
   }
 
   @Post()
-  async create(@Body('name') name: string, @Res() res: Response) {
-    await this.brandsService.create(this.normalizeName(name));
+  async create(@Body() dto: CreateBrandDto, @Res() res: Response) {
+    await this.brandsService.create(dto);
     return res.redirect('/brands');
   }
 
@@ -39,23 +40,23 @@ export class BrandsController {
   @Render('brands/detail')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const brand = await this.brandsService.findOne(id);
-    return { brand };
+    return { pageTitle: `Brand #${id}`, brand };
   }
 
   @Get(':id/edit')
   @Render('brands/edit')
   async editForm(@Param('id', ParseIntPipe) id: number) {
     const brand = await this.brandsService.findOne(id);
-    return { brand };
+    return { pageTitle: `Edit brand #${id}`, brand };
   }
 
   @Post(':id/edit')
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body('name') name: string,
+    @Body() dto: UpdateBrandDto,
     @Res() res: Response,
   ) {
-    await this.brandsService.update(id, this.normalizeName(name));
+    await this.brandsService.update(id, dto);
     return res.redirect(`/brands/${id}`);
   }
 
@@ -63,13 +64,5 @@ export class BrandsController {
   async remove(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     await this.brandsService.remove(id);
     return res.redirect('/brands');
-  }
-
-  private normalizeName(name?: string) {
-    const normalized = name?.trim();
-    if (!normalized) {
-      throw new BadRequestException('name is required');
-    }
-    return normalized;
   }
 }

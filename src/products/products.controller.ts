@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -30,7 +29,7 @@ export class ProductsController {
   @Render('products/list')
   async findAll() {
     const products = await this.productsService.findAll();
-    return { products };
+    return { pageTitle: 'Products', products };
   }
 
   @Get('add')
@@ -40,13 +39,11 @@ export class ProductsController {
       include: { brand: true },
       orderBy: { name: 'asc' },
     });
-    return { categories };
+    return { pageTitle: 'Add product', categories };
   }
 
   @Post()
-  async create(@Body() body: Record<string, string>, @Res() res: Response) {
-    const dto = this.toCreateDto(body);
-    this.validateCreateDto(dto);
+  async create(@Body() dto: CreateProductDto, @Res() res: Response) {
     await this.productsService.create(dto);
     return res.redirect('/products');
   }
@@ -55,7 +52,7 @@ export class ProductsController {
   @Render('products/detail')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const product = await this.productsService.findOne(id);
-    return { product };
+    return { pageTitle: `Product #${id}`, product };
   }
 
   @Get(':id/edit')
@@ -68,17 +65,15 @@ export class ProductsController {
         orderBy: { name: 'asc' },
       }),
     ]);
-    return { product, categories };
+    return { pageTitle: `Edit product #${id}`, product, categories };
   }
 
   @Post(':id/edit')
   async updateFromForm(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: Record<string, string>,
+    @Body() dto: UpdateProductDto,
     @Res() res: Response,
   ) {
-    const dto = this.toUpdateDto(body);
-    this.validateUpdateDto(dto);
     await this.productsService.update(id, dto);
     return res.redirect(`/products/${id}`);
   }
@@ -87,66 +82,28 @@ export class ProductsController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateProductDto,
-    @Res() res: Response,
   ) {
-    this.validateUpdateDto(dto);
-    await this.productsService.update(id, dto);
-    return res.redirect(`/products/${id}`);
+    return this.productsService.update(id, dto);
   }
 
   @Post(':id/delete')
-  async removeFromForm(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+  async removeFromForm(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() res: Response,
+  ) {
     await this.productsService.remove(id);
     return res.redirect('/products');
   }
 
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-    await this.productsService.remove(id);
-    return res.redirect('/products');
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.remove(id);
   }
 
   @Sse('events')
   sse(): Observable<MessageEvent> {
-    return this.productsService.stream().pipe(
-      map((event) => ({ data: event }) as MessageEvent),
-    );
-  }
-
-  private toCreateDto(body: Record<string, string>): CreateProductDto {
-    return {
-      name: body.name,
-      description: body.description,
-      price: Number(body.price),
-      stock: Number(body.stock),
-      categoryId: Number(body.categoryId),
-    };
-  }
-
-  private toUpdateDto(body: Record<string, string>): UpdateProductDto {
-    return {
-      name: body.name,
-      description: body.description,
-      price: Number(body.price),
-      stock: Number(body.stock),
-      categoryId: Number(body.categoryId),
-      updatedAt: new Date(),
-    };
-  }
-
-  private validateCreateDto(dto: CreateProductDto) {
-    if (!dto.name || !dto.description) {
-      throw new BadRequestException('name and description are required');
-    }
-  }
-
-  private validateUpdateDto(dto: UpdateProductDto) {
-    if (dto.name !== undefined && dto.name.trim().length === 0) {
-      throw new BadRequestException('name must not be empty');
-    }
-    
-    if (dto.description !== undefined && dto.description.trim().length === 0) {
-      throw new BadRequestException('description must not be empty');
-    }
+    return this.productsService
+      .stream()
+      .pipe(map((event) => ({ data: event }) as MessageEvent));
   }
 }

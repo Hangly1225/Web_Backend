@@ -1,0 +1,12 @@
+<%- include('../partials/head', { pageTitle, user, menuItems }) %>
+  <h3>Add user</h3>
+  <form action="/users" method="post">
+    <label>Username</label>
+    <input name="username" placeholder="username" required />
+    <label>Email</label>
+    <input name="email" type="email" placeholder="email" required />
+    <label>Password</label>
+    <input name="password" type="password" placeholder="password" required />
+    <button type="submit">Create</button>
+  </form>
+<%- include('../partials/footer') %>

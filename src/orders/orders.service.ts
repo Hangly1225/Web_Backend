@@ -1,11 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { OrderStatus } from '@prisma/client';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { buildPageMeta, getPagination } from '../common/pagination';
 import { PrismaService } from '../prisma/prisma.service';
-
-interface SaveOrderDto {
-  userId: number;
-  status: OrderStatus;
-}
+import { CreateOrderDto } from './dto/create-orders.dto';
+import { UpdateOrderDto } from './dto/update-orders.dto';
 
 @Injectable()
 export class OrdersService {
@@ -21,6 +19,26 @@ export class OrdersService {
       },
       orderBy: { id: 'desc' },
     });
+  }
+
+  async findPaginated(query: PaginationQueryDto) {
+    const { skip, take } = getPagination(query.page, query.limit);
+    const [data, totalItems] = await Promise.all([
+      this.prisma.order.findMany({
+        skip,
+        take,
+        include: {
+          user: true,
+          items: {
+            include: { product: true },
+          },
+        },
+        orderBy: { id: 'desc' },
+      }),
+      this.prisma.order.count(),
+    ]);
+
+    return { data, meta: buildPageMeta(query.page, query.limit, totalItems) };
   }
 
   async findOne(id: number) {
@@ -41,7 +59,7 @@ export class OrdersService {
     return order;
   }
 
-  create(dto: SaveOrderDto) {
+  create(dto: CreateOrderDto) {
     return this.prisma.order.create({
       data: {
         userId: dto.userId,
@@ -50,13 +68,13 @@ export class OrdersService {
     });
   }
 
-  async update(id: number, dto: SaveOrderDto) {
+  async update(id: number, dto: UpdateOrderDto) {
     await this.findOne(id);
     return this.prisma.order.update({
       where: { id },
       data: {
-        userId: dto.userId,
-        status: dto.status,
+        ...(dto.userId !== undefined ? { userId: dto.userId } : {}),
+        ...(dto.status !== undefined ? { status: dto.status } : {}),
       },
     });
   }

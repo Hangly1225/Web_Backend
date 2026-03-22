@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Brand as BrandModel } from "@prisma/client";
+import { ApiProperty } from '@nestjs/swagger';
+import { Brand as BrandModel } from '@prisma/client';
 
 export class Brands implements BrandModel {
     @ApiProperty()

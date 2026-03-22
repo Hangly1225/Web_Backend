@@ -1,11 +1,29 @@
-import { BadRequestException, Controller, Get, Post, Req, Res } from '@nestjs/common';
-import { Response } from 'express';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
+
+interface SessionRequest extends Request {
+  body: {
+    username?: string;
+    password?: string;
+  };
+  session: {
+    user?: string;
+    destroy: (callback: () => void) => void;
+  };
+}
 
 @Controller()
 export class AuthController {
   @Post('login')
-  login(@Req() req, @Res() res: Response) {
-    const { username, password } = req.body ?? {};
+  login(@Req() req: SessionRequest, @Res() res: Response) {
+    const { username, password } = req.body;
     if (!username || !password) {
       throw new BadRequestException('username and password are required');
     }
@@ -14,19 +32,18 @@ export class AuthController {
   }
 
   @Get('logout')
-  logout(@Req() req, @Res() res: Response) {
+  logout(@Req() req: SessionRequest, @Res() res: Response) {
     req.session.destroy(() => {
       res.redirect('/');
     });
   }
   
   @Get('profile')
-  profile(@Req() req) {
+  profile(@Req() req: SessionRequest) {
     if (!req.session.user) {
       return { message: 'Please login' };
     }
 
     return { message: `Welcome ${req.session.user}` };
   }
-
 }

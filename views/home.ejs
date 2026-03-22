@@ -1,36 +1,17 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <%- include('partials/shared-head', { 
-      pageTitle: typeof pageTitle !== 'undefined' ? pageTitle : 'Home'
-    }) %>
-  </head>
-  <body>
-    <%- include('partials/header', { 
-      menuItems: typeof menuItems !== 'undefined' ? menuItems : [], 
-      isAuthenticated: typeof isAuthenticated !== 'undefined' ? isAuthenticated : false, 
-      userName: typeof userName !== 'undefined' ? userName : '' 
-    }) %>
+<%- include('partials/head', { pageTitle: pageTitle || 'Home', user: userName || null, menuItems }) %>
+  <h2>Featured products</h2>
+  <p>
+    Session state:
+    <% if (isAuthenticated) { %>
+      <strong>Authorized</strong>
+    <% } else { %>
+      <strong>Unauthorized</strong>
+    <% } %>
+  </p>
 
-    <main class="container" style="padding: 24px 40px;">
-      <h2>Featured products</h2>
-      <p>
-        Session state:
-        <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
-          <strong>Authorized</strong>
-        <% } else { %>
-          <strong>Unauthorized</strong>
-        <% } %>
-      </p>
-
-      <section style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;">
-        <% (typeof products !== 'undefined' ? products : []).forEach((product) => { %>
-          <%- include('partials/product-card', { product }) %>
-        <% }) %>
-      </section>
-    </main>
-
-    <%- include('partials/footer') %>
-    <%- include('partials/shared-scripts') %>
-  </body>
-</html>
+  <section style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;">
+    <% products.forEach((product) => { %>
+      <%- include('partials/product-card', { product }) %>
+    <% }) %>
+  </section>
+<%- include('partials/footer') %>

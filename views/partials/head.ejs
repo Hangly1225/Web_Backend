@@ -1,18 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= title || 'Web Backend' %></title>
-  <style>
-    body { font-family: Time 'Times New Roman', sans-serif; margin: 0; padding: 0; }
-    header, footer { background: #c1efd3; padding: 12px 16px; }
-    nav a { margin-right: 12px; }
-    main { padding: 16px; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ddd; padding: 8px; }
-    .toast { background: #e6ffed; color: #055160; padding: 10px; margin-bottom: 12px; display: none; }
-    form.inline { display: inline; }
-  </style>
+  <%- include('shared-head', { pageTitle: pageTitle || title || 'Web Backend' }) %>
 </head>
 <body>
+  <%- include('header', { user, menuItems }) %>
+  <main>

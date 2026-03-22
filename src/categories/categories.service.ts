@@ -1,10 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { buildPageMeta, getPagination } from '../common/pagination';
 import { PrismaService } from '../prisma/prisma.service';
-
-interface SaveCategoryDto {
-  name: string;
-  brandId: number;
-}
+import { CreateCategoryDto } from './dto/create-categories.dto';
+import { UpdateCategoryDto } from './dto/update-categories.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -15,6 +14,21 @@ export class CategoriesService {
       include: { brand: true, products: true },
       orderBy: { name: 'asc' },
     });
+  }
+
+  async findPaginated(query: PaginationQueryDto) {
+    const { skip, take } = getPagination(query.page, query.limit);
+    const [data, totalItems] = await Promise.all([
+      this.prisma.category.findMany({
+        skip,
+        take,
+        include: { brand: true, products: true },
+        orderBy: { name: 'asc' },
+      }),
+      this.prisma.category.count(),
+    ]);
+
+    return { data, meta: buildPageMeta(query.page, query.limit, totalItems) };
   }
 
   async findOne(id: number) {
@@ -30,11 +44,11 @@ export class CategoriesService {
     return category;
   }
 
-  create(dto: SaveCategoryDto) {
+  create(dto: CreateCategoryDto) {
     return this.prisma.category.create({ data: dto });
   }
 
-  async update(id: number, dto: SaveCategoryDto) {
+  async update(id: number, dto: UpdateCategoryDto) {
     await this.findOne(id);
     return this.prisma.category.update({ where: { id }, data: dto });
   }
