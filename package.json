@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "@apollo/server": "^5.4.0",
-    "@as-integrations/express5": "^1.2.1",
     "@aws-sdk/client-s3": "^3.1014.0",
     "@nestjs/apollo": "^13.2.4",
     "@nestjs/cache-manager": "^3.1.0",
