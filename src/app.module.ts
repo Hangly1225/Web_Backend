@@ -10,6 +10,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { BrandsModule } from './brands/brands.module';
 import { UsersModule } from './users/users.module';
 import { OrdersModule } from './orders/orders.module';
+import { GraphqlModule } from './graphql/graphql.module';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { OrdersModule } from './orders/orders.module';
     BrandsModule,
     UsersModule,
     OrdersModule,
+    GraphqlModule,
+    StorageModule,
   ],
   controllers: [HomeController, AuthController, PagesController],
   providers: [PrismaService],

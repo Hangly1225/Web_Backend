@@ -55,11 +55,14 @@ export class ProductsService {
   }
 
   async findOne(id: number) {
-    return this.memoryCache.getOrSet(`products:item:${id}`, this.cacheTtlMs, async () => {
-      const product = await this.prisma.product.findUnique({
-        where: { id },
-        include: { category: { include: { brand: true } } },
-      });
+    return this.memoryCache.getOrSet(
+      `products:item:${id}`,
+      this.cacheTtlMs,
+      async () => {
+        const product = await this.prisma.product.findUnique({
+          where: { id },
+          include: { category: { include: { brand: true } } },
+        });
 
       if (!product) {
         throw new NotFoundException(`Product #${id} not found`);

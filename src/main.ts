@@ -48,6 +48,8 @@ async function bootstrap() {
       { label: 'Orders', href: '/orders' },
       { label: 'Users', href: '/users' },
       { label: 'Swagger', href: '/api/docs' },
+      { label: 'GraphQL', href: '/graphql' },
+      { label: 'Uploads', href: '/files/upload' },
     ];
     next();
   });

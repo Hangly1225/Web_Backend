@@ -1,0 +1,21 @@
+<%- include('../partials/head', { pageTitle, user, menuItems }) %>
+  <h2>Upload product media</h2>
+  <p>This page demonstrates file upload support for Lab 6.</p>
+
+  <form action="/files/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" accept="image/png,image/jpeg,image/webp" required />
+    <button type="submit">Upload</button>
+  </form>
+
+  <% if (typeof uploaded !== 'undefined' && uploaded) { %>
+    <h3>Uploaded file</h3>
+    <ul>
+      <li><strong>Name:</strong> <%= uploaded.originalName %></li>
+      <li><strong>MIME type:</strong> <%= uploaded.mimeType %></li>
+      <li><strong>Size:</strong> <%= uploaded.size %> bytes</li>
+      <li><strong>Storage:</strong> <%= uploaded.storage %></li>
+      <li><strong>URL:</strong> <a href="<%= uploaded.url %>"><%= uploaded.url %></a></li>
+    </ul>
+    <img src="<%= uploaded.url %>" alt="Uploaded preview" style="max-width: 320px; border-radius: 8px;" />
+  <% } %>
+<%- include('../partials/footer') %>
