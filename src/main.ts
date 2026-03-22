@@ -21,21 +21,19 @@ async function bootstrap() {
   app.setBaseViewsDir(join(process.cwd(), 'views'));
   app.setViewEngine('ejs');
 
-  const sessionFactory = session as unknown as (
-    options: SessionOptions,
-  ) => RequestHandler;
-  const sessionMiddleware = sessionFactory({
-    secret: process.env.SESSION_SECRET ?? 'dev-session-secret',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60,
-    },
-  });
-  app.use(sessionMiddleware);
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET ?? 'dev-session-secret',
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000 * 60 * 60,
+      },
+    }),
+  );
 
   app.use((req: Request, res: Response, next: NextFunction) => {
     const request = req as AppRequest;
