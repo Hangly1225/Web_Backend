@@ -29,7 +29,8 @@
     "postinstall": "node scripts/patch-prisma-runtime.js"
   },
   "dependencies": {
-    "@apollo/server": "^5.0.0",
+    "@apollo/server": "^5.4.0",
+    "@as-integrations/express5": "^1.1.2",
     "@aws-sdk/client-s3": "^3.1014.0",
     "@nestjs/apollo": "^13.2.4",
     "@nestjs/cache-manager": "^3.1.0",
@@ -44,7 +45,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.4",
     "ejs": "^5.0.1",
-    "express": "^5.1.0",
+    "express": "^5.2.1",
     "express-session": "^1.19.0",
     "graphql": "^16.13.1",
     "graphql-query-complexity": "^1.1.0",
