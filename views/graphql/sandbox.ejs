@@ -1,13 +1,11 @@
-<%- include('../partials/head', { pageTitle, user, menuItems }) %>
-  <h2>GraphQL Sandbox</h2>
-  <p>Execute GraphQL-style queries and mutations directly against <code>/graphql</code>.</p>
+<p>Execute GraphQL-style queries and mutations directly against <code>/graphql</code>.</p>
 
   <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;">
     <section>
       <h3>Query editor</h3>
       <textarea id="query" style="width:100%; min-height:260px;"><%= sampleQuery %></textarea>
       <h3>Variables</h3>
-      <textarea id="variables" style="width:100%; min-height:120px;">{}</textarea>
+      <textarea id="variables" style="width:100%; min-height:120px;"><%= sampleVariables %></textarea>
       <p>
         <button id="run-query" type="button">Run query</button>
       </p>
@@ -40,7 +38,11 @@
       const response = await fetch('/graphql', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: queryEditor.value, variables })
+        body: JSON.stringify({
+          query: queryEditor.value,
+          variables,
+          operationName: 'SandboxOperation'
+        })
       });
       const payload = await response.json();
       result.textContent = JSON.stringify(payload, null, 2);
