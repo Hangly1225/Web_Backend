@@ -1,13 +1,20 @@
-window.onload = function() {
-    var loadTime = window.performance.timing.domContentLoadedEventEnd-window.performance.timing.navigationStart;
-    var newText = document.createTextNode("Page load time is " + loadTime.toString() + " seconds");
-	document.getElementsByTagName("footer")[0].appendChild(newText);
-
+window.onload = function () {
+    const navigationEntry = performance.getEntriesByType('navigation')[0];
+    const loadTime = navigationEntry
+      ? navigationEntry.domContentLoadedEventEnd
+      : window.performance.timing.domContentLoadedEventEnd -
+        window.performance.timing.navigationStart;
     
-    let links = Array.from(document.getElementsByClassName("nav_element"));
-    links.forEach(link => {
-        if(link.href == window.location.href){
-            link.classList.add("nav__element-active")
+    const timingInfo = document.getElementById('timing-info');
+    if (timingInfo) {
+        const serverElapsedTime = timingInfo.dataset.serverElapsedTime;
+        timingInfo.textContent = `Server time: ${serverElapsedTime || 'n/a'} ms | Client DOM ready: ${Math.round(loadTime)} ms`;
+    }
+    
+    const links = Array.from(document.getElementsByClassName('nav_element'));
+    links.forEach((link) => {
+        if (link.href === window.location.href) {
+        link.classList.add('nav__element-active');
         }
-    })
-}
+    });
+};

@@ -3,6 +3,7 @@ import {
     Controller,
     Delete,
     Get,
+    HttpCode,
     Param,
     ParseIntPipe,
     Patch,
@@ -14,6 +15,8 @@ import {
     ApiBadRequestResponse,
     ApiCreatedResponse,
     ApiNotFoundResponse,
+    ApiNoContentResponse,
+    ApiOkResponse,
     ApiOperation,
     ApiParam,
     ApiTags,
@@ -39,6 +42,7 @@ import {
       @Query() query: PaginationQueryDto,
       @Res({ passthrough: true }) res: Response,
     ) {
+      res.setHeader('Cache-Control', 'public, max-age=60, must-revalidate');
       const result = await this.productsService.findPaginated(query);
       setPaginationLinks(
         res,
@@ -53,8 +57,13 @@ import {
     @Get(':id')
     @ApiOperation({ summary: 'Get one product by id' })
     @ApiParam({ name: 'id', type: Number })
+    @ApiOkResponse({ type: Products })
     @ApiNotFoundResponse({ description: 'Product not found' })
-    async findOne(@Param('id', ParseIntPipe) id: number) {
+    async findOne(
+      @Param('id', ParseIntPipe) id: number,
+      @Res({ passthrough: true }) res: Response,
+    ) {
+      res.setHeader('Cache-Control', 'public, max-age=60, must-revalidate');
       return this.productsService.findOne(id);
     }
   
@@ -68,14 +77,18 @@ import {
   
     @Patch(':id')
     @ApiOperation({ summary: 'Update a product' })
+    @ApiOkResponse({ type: Products })
+    @ApiBadRequestResponse({ description: 'Invalid request body' })
     @ApiNotFoundResponse({ description: 'Product not found' })
     update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateProductDto) {
       return this.productsService.update(id, dto);
     }
   
     @Delete(':id')
+    @HttpCode(204)
     @ApiOperation({ summary: 'Delete a product' })
-    remove(@Param('id', ParseIntPipe) id: number) {
-      return this.productsService.remove(id);
+    @ApiNoContentResponse({ description: 'Product deleted' })
+    async remove(@Param('id', ParseIntPipe) id: number) {
+      await this.productsService.remove(id);
     }
   }

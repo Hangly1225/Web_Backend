@@ -5,6 +5,7 @@ import { buildPageMeta, getPagination } from '../common/pagination';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { CreateProductDto } from './dto/create-products.dto';
 import { UpdateProductDto } from './dto/update-products.dto';
+import { MemoryCacheService } from '../common/cache/memory-cache.service';
 
 @Injectable()
 export class ProductsService {
@@ -14,45 +15,58 @@ export class ProductsService {
     name: string;
   }>();
 
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly cacheTtlMs = 5_000;
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly memoryCache: MemoryCacheService,
+  ) {}
 
   stream() {
     return this.events.asObservable();
   }
 
   findAll() {
-    return this.prisma.product.findMany({
-      include: { category: { include: { brand: true } } },
-      orderBy: { id: 'desc' },
-    });
-  }
-
-  async findPaginated(query: PaginationQueryDto) {
-    const { skip, take } = getPagination(query.page, query.limit);
-    const [data, totalItems] = await Promise.all([
+    return this.memoryCache.getOrSet('products:all', this.cacheTtlMs, () =>
       this.prisma.product.findMany({
-        skip,
-        take,
         include: { category: { include: { brand: true } } },
         orderBy: { id: 'desc' },
       }),
-      this.prisma.product.count(),
-    ]);
+    );
+  }
 
-    return { data, meta: buildPageMeta(query.page, query.limit, totalItems) };
+  async findPaginated(query: PaginationQueryDto) {
+    const cacheKey = `products:page:${query.page}:limit:${query.limit}`;
+
+    return this.memoryCache.getOrSet(cacheKey, this.cacheTtlMs, async () => {
+      const { skip, take } = getPagination(query.page, query.limit);
+      const [data, totalItems] = await Promise.all([
+        this.prisma.product.findMany({
+          skip,
+          take,
+          include: { category: { include: { brand: true } } },
+          orderBy: { id: 'desc' },
+        }),
+        this.prisma.product.count(),
+      ]);
+
+      return { data, meta: buildPageMeta(query.page, query.limit, totalItems) };
+    });
   }
 
   async findOne(id: number) {
-    const product = await this.prisma.product.findUnique({
-      where: { id },
-      include: { category: { include: { brand: true } } },
+    return this.memoryCache.getOrSet(`products:item:${id}`, this.cacheTtlMs, async () => {
+      const product = await this.prisma.product.findUnique({
+        where: { id },
+        include: { category: { include: { brand: true } } },
+      });
+
+      if (!product) {
+        throw new NotFoundException(`Product #${id} not found`);
+      }
+
+      return product;
     });
-
-    if (!product) {
-      throw new NotFoundException(`Product #${id} not found`);
-    }
-
-    return product;
   }
 
   async create(dto: CreateProductDto) {
@@ -65,6 +79,7 @@ export class ProductsService {
         categoryId: dto.categoryId,
       },
     });
+    this.memoryCache.deleteByPrefix('products:');
     this.events.next({
       type: 'created',
       productId: created.id,
@@ -87,6 +102,7 @@ export class ProductsService {
         ...(dto.categoryId !== undefined ? { categoryId: dto.categoryId } : {}),
       },
     }); 
+    this.memoryCache.deleteByPrefix('products:');
     this.events.next({
       type: 'updated',
       productId: updated.id,
@@ -98,6 +114,7 @@ export class ProductsService {
   async remove(id: number) {
     await this.findOne(id);
     const removed = await this.prisma.product.delete({ where: { id } });
+    this.memoryCache.deleteByPrefix('products:');
     this.events.next({
       type: 'deleted',
       productId: removed.id,

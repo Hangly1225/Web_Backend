@@ -1,0 +1,7 @@
+<%- include('../partials/head', { pageTitle: pageTitle || 'Error' }) %>
+  <section>
+    <h2><%= errorTitle || 'Something went wrong' %></h2>
+    <p><%= errorMessage || 'Unexpected error' %></p>
+    <p><a href="/">Back to home</a></p>
+  </section>
+<%- include('../partials/footer') %>

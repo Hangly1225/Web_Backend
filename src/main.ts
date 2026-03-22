@@ -2,11 +2,13 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as session from 'express-session';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { EtagInterceptor } from './common/interceptors/etag.interceptor';
+import { RequestTimingInterceptor } from './common/interceptors/request-timing.interceptor';
 
 interface AppRequest extends Request {
   session?: {
@@ -47,7 +49,7 @@ async function bootstrap() {
       { label: 'Users', href: '/users' },
       { label: 'Swagger', href: '/api/docs' },
     ];
-  next();
+    next();
   });
 
   app.useGlobalPipes(
@@ -58,6 +60,10 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new GlobalExceptionFilter());
+  app.useGlobalInterceptors(
+    new RequestTimingInterceptor(),
+    new EtagInterceptor(),
+  );
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Web Backend API')
