@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
+import { BrandsModule } from '../brands/brands.module';
 import { CategoriesModule } from '../categories/categories.module';
 import { ProductsModule } from '../products/products.module';
-import { GraphqlController } from './graphql.controller';
-import { GraphqlLiteService } from './graphql-lite.service';
+import { CategoriesResolver } from './resolvers/categories.resolver';
+import { ProductsResolver } from './resolvers/products.resolver';
 
 @Module({
-  imports: [ProductsModule, CategoriesModule],
-  controllers: [GraphqlController],
-  providers: [GraphqlLiteService],
+  imports: [ProductsModule, CategoriesModule, BrandsModule],
+  providers: [ProductsResolver, CategoriesResolver],
 })
 export class GraphqlModule {}
