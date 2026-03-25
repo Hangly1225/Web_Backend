@@ -6,6 +6,7 @@ import {
   Req,
   Res,
   Body,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { 
   ApiBody, 
@@ -18,24 +19,46 @@ import { Response } from 'express';
 import { PublicAccess } from './decorators/public-access.decorator';
 import { SessionRequest } from '../types/session';
 import { UserRole } from './decorators/roles.decorator';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { PrismaService } from '../prisma/prisma.service';
 
 class LoginDto {
-  username?: string;
-  password?: string;
+  @IsString()
+  @IsNotEmpty()
+  username!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password!: string;
 }
 
 @ApiTags('auth')
 @Controller()
 export class AuthController {
+  constructor(private readonly prisma: PrismaService) {}
+
   private resolveRole(username: string): UserRole {
     return username.toLowerCase().includes('admin') ? 'admin' : 'user';
+  }
+
+  private async validateCredentials(username: string, password: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { username },
+      select: { id: true, username: true, password: true },
+    });
+
+    if (!user || user.password !== password) {
+      throw new UnauthorizedException('Invalid username or password');
+    }
+
+    return user;
   }
 
   @PublicAccess()
   @Post('login')
   @ApiOperation({ summary: 'Create a session by username/password' })
   @ApiBody({ type: LoginDto })
-  login(
+  async login(
     @Body() body: LoginDto,
     @Req() req: SessionRequest,
     @Res() res: Response,
@@ -45,11 +68,8 @@ export class AuthController {
       throw new BadRequestException('username and password are required');
     }
 
-    const role: UserRole = username.toLowerCase().includes('admin')
-      ? 'admin'
-      : 'user';
-
-    req.session.user = username;
+    const user = await this.validateCredentials(username, password);
+    req.session.user = user.username;
     req.session.role = this.resolveRole(username);
     return res.redirect('/');
   }
@@ -58,17 +78,18 @@ export class AuthController {
   @Post('api/auth/login')
   @ApiOperation({ summary: 'Create an API session and return current principal' })
   @ApiBody({ type: LoginDto })
-  apiLogin(@Body() body: LoginDto, @Req() req: SessionRequest) {
+  async apiLogin(@Body() body: LoginDto, @Req() req: SessionRequest) {
     const { username, password } = body;
     if (!username || !password) {
       throw new BadRequestException('username and password are required');
     }
 
-    const role = this.resolveRole(username);
-    req.session.user = username;
+    const user = await this.validateCredentials(username, password);
+    const role = this.resolveRole(user.username);
+    req.session.user = user.username;
     req.session.role = role;
 
-    return { authenticated: true, user: username, role };
+    return { authenticated: true, user: user.username, role };
   }
 
   @ApiCookieAuth('session-cookie')
