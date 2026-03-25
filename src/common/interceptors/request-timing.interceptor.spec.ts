@@ -35,4 +35,33 @@ describe('RequestTimingInterceptor', () => {
       expect.stringMatching(/ms$/),
     );
   });
+
+  it('does not set headers when response has already been sent', async () => {
+    const interceptor = new RequestTimingInterceptor();
+    const setHeader = jest.fn();
+
+    const context = {
+      getType: () => 'http',
+      switchToHttp: () => ({
+        getRequest: () => ({
+          path: '/login',
+          accepts: (type: string) => type === 'html',
+        }),
+        getResponse: () => ({
+          setHeader,
+          headersSent: true,
+          writableEnded: true,
+        }),
+      }),
+    } as ExecutionContext;
+
+    const next: CallHandler = {
+      handle: () => of(undefined),
+    };
+
+    const result = await lastValueFrom(interceptor.intercept(context, next));
+
+    expect(result).toBeUndefined();
+    expect(setHeader).not.toHaveBeenCalled();
+  });
 });

@@ -21,6 +21,8 @@ export class RequestTimingInterceptor implements NestInterceptor {
     >();
     const response = http.getResponse<{
       setHeader: (name: string, value: string) => void;
+      headersSent?: boolean;
+      writableEnded?: boolean;
     }>();
     const startedAt = performance.now();
     const requestPath = (request as { path?: string }).path ?? '';
@@ -35,6 +37,8 @@ export class RequestTimingInterceptor implements NestInterceptor {
 
         if (
           wantsHtml &&
+          !response.headersSent &&
+          !response.writableEnded &&
           data !== null &&
           typeof data === 'object' &&
           !Array.isArray(data)
@@ -51,7 +55,9 @@ export class RequestTimingInterceptor implements NestInterceptor {
         const elapsedTimeMs = Number(
           (performance.now() - startedAt).toFixed(2),
         );
-        response.setHeader('X-Elapsed-Time', `${elapsedTimeMs}ms`);
+        if (!response.headersSent && !response.writableEnded) {
+          response.setHeader('X-Elapsed-Time', `${elapsedTimeMs}ms`);
+        }
       }),
     );
   }
