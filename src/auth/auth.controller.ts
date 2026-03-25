@@ -71,7 +71,7 @@ export class AuthController {
   }
 
   private async validateCredentials(loginId: string, password: string) {
-    const normalizedLoginId = loginId.trim();
+    const normalizedLoginId = loginId.trim(); 
     const normalizedPassword = password.trim();
 
     let user: { id: number; username: string; email: string; password: string } | null;

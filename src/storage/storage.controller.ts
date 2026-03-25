@@ -33,7 +33,7 @@ class UploadedFileResponseDto {
 export class StorageController {
   constructor(private readonly storageService: StorageService) {}
 
-  @Get('files/upload')
+  @Get('files/upload') 
   @Render('files/upload')
   uploadPage() {
     return { pageTitle: 'Upload files' };

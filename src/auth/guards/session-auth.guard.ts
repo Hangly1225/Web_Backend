@@ -14,7 +14,7 @@ import {
   
     canActivate(context: ExecutionContext): boolean {
       const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-        context.getHandler(),
+        context.getHandler(), 
         context.getClass(),
       ]);
   

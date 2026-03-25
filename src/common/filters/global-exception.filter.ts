@@ -40,7 +40,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         pageTitle: `Error ${status}`,
         errorTitle: `Error ${status}`,
         errorMessage: normalizedMessage,
-      });
+      }); 
     }
 
     return response.status(status).json({

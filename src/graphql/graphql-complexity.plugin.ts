@@ -31,4 +31,4 @@ export class GraphqlComplexityPlugin implements ApolloServerPlugin {
       },
     };
   }
-}
+} 

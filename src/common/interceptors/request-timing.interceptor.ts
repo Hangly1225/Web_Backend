@@ -57,7 +57,7 @@ export class RequestTimingInterceptor implements NestInterceptor {
         );
         if (!response.headersSent && !response.writableEnded) {
           response.setHeader('X-Elapsed-Time', `${elapsedTimeMs}ms`);
-        }
+        } 
       }),
     );
   }

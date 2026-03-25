@@ -38,6 +38,7 @@ import { LoginRedirectMiddleware } from './auth/middleware/login-redirect.middle
     GraphqlModule,
     StorageModule,
   ],
+  
   controllers: [HomeController, AuthController, PagesController],
   providers: [PrismaService],
 })
@@ -53,3 +54,4 @@ export class AppModule implements NestModule {
     );
   }
 }
+

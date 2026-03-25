@@ -33,7 +33,7 @@ export class EtagInterceptor implements NestInterceptor {
       return next.handle();
     }
 
-    return next.handle().pipe(
+    return next.handle().pipe( 
       map((data) => {
         const body = JSON.stringify(data);
         const etag = `W/\"${createHash('sha1').update(body).digest('hex')}\"`;

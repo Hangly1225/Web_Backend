@@ -17,7 +17,7 @@ interface AppRequest extends Request {
     user?: string;
     role?: 'user' | 'admin';
   };
-}
+} 
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

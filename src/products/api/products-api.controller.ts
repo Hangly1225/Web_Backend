@@ -45,7 +45,7 @@ export class ProductsApiController {
     @Query() query: PaginationQueryDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    res.setHeader('Cache-Control', 'public, max-age=60, must-revalidate');
+    res.setHeader('Cache-Control', 'public, max-age=60, must-revalidate'); 
     const result = await this.productsService.findPaginated(query);
     setPaginationLinks(
       res,

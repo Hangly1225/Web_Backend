@@ -11,7 +11,7 @@ import { CacheModule } from '@nestjs/cache-manager';
       ttl: 5000,
       max: 100,
     }),
-  ],
+  ], 
 
   controllers: [ProductsController, ProductsApiController],
   providers: [ProductsService, PrismaService],
