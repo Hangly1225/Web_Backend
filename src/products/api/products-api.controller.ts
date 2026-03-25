@@ -20,6 +20,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiCookieAuth,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
@@ -29,8 +30,10 @@ import { Products } from '../entities/products.entity';
 import { CreateProductDto } from '../dto/create-products.dto';
 import { UpdateProductDto } from '../dto/update-products.dto';
 import { ProductsService } from '../products.service';
+import { Roles } from '../../auth/decorators/roles.decorator';
 
 @ApiTags('products')
+@ApiCookieAuth('session-cookie')
 @Controller('api/products')
 export class ProductsApiController {
   constructor(private readonly productsService: ProductsService) {}
@@ -67,6 +70,7 @@ export class ProductsApiController {
     return this.productsService.findOne(id);
   }
 
+  @Roles('admin')
   @Post()
   @ApiOperation({ summary: 'Create a product' })
   @ApiCreatedResponse({ type: Products })
@@ -75,6 +79,7 @@ export class ProductsApiController {
     return this.productsService.create(dto);
   }
 
+  @Roles('admin')
   @Patch(':id')
   @ApiOperation({ summary: 'Update a product' })
   @ApiOkResponse({ type: Products })
@@ -84,6 +89,7 @@ export class ProductsApiController {
     return this.productsService.update(id, dto);
   }
 
+  @Roles('admin')
   @Delete(':id')
   @HttpCode(204)
   @ApiOperation({ summary: 'Delete a product' })

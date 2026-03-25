@@ -19,6 +19,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiCookieAuth,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
@@ -27,6 +28,7 @@ import { ApiPaginatedResponse } from '../../common/openai/paginated-response.dec
 import { CreateOrderDto } from '../dto/create-orders.dto';
 import { UpdateOrderDto } from '../dto/update-orders.dto';
 import { OrdersService } from '../orders.service';
+import { Roles } from '../../auth/decorators/roles.decorator';
 
 class OrderApiEntity {
   id: number;
@@ -37,6 +39,7 @@ class OrderApiEntity {
 }
 
 @ApiTags('orders')
+@ApiCookieAuth('session-cookie')
 @Controller('api/orders')
 export class OrdersApiController {
   constructor(private readonly ordersService: OrdersService) {}
@@ -92,6 +95,7 @@ export class OrdersApiController {
       return item;
   }
 
+  @Roles('admin')
   @Post()
   @ApiOperation({ summary: 'Create an order' })
   @ApiCreatedResponse({ type: OrderApiEntity })
@@ -100,6 +104,7 @@ export class OrdersApiController {
     return this.ordersService.create(dto);
   }
 
+  @Roles('admin')
   @Patch(':id')
   @ApiOperation({ summary: 'Update an order' })
   @ApiOkResponse({ type: OrderApiEntity })
@@ -109,6 +114,7 @@ export class OrdersApiController {
     return this.ordersService.update(id, dto);
   }
 
+  @Roles('admin')
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an order' })
   @ApiOkResponse({ type: OrderApiEntity })

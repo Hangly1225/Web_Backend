@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule, RequestMethod } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -15,6 +15,7 @@ import { OrdersModule } from './orders/orders.module';
 import { GraphqlModule } from './graphql/graphql.module';
 import { StorageModule } from './storage/storage.module';
 import { GraphqlComplexityPlugin } from './graphql/graphql-complexity.plugin';
+import { LoginRedirectMiddleware } from './auth/middleware/login-redirect.middleware';
 
 @Module({
   imports: [
@@ -40,4 +41,15 @@ import { GraphqlComplexityPlugin } from './graphql/graphql-complexity.plugin';
   controllers: [HomeController, AuthController, PagesController],
   providers: [PrismaService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoginRedirectMiddleware).forRoutes(
+      { path: 'products', method: RequestMethod.ALL },
+      { path: 'brands', method: RequestMethod.ALL },
+      { path: 'categories', method: RequestMethod.ALL },
+      { path: 'orders', method: RequestMethod.ALL },
+      { path: 'users', method: RequestMethod.ALL },
+      { path: 'files/upload', method: RequestMethod.ALL },
+    );
+  }
+}

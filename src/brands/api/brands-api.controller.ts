@@ -19,6 +19,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiCookieAuth,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
@@ -28,8 +29,10 @@ import { CreateBrandDto } from '../dto/create-brands.dto';
 import { UpdateBrandDto } from '../dto/update-brands.dto';
 import { Brands } from '../entities/brands.entity';
 import { BrandsService } from '../brands.service';
+import { Roles } from '../../auth/decorators/roles.decorator';
 
 @ApiTags('brands')
+@ApiCookieAuth('session-cookie')
 @Controller('api/brands')
 export class BrandsApiController {
   constructor(private readonly brandsService: BrandsService) {}
@@ -85,6 +88,7 @@ export class BrandsApiController {
       return category;
   }
 
+  @Roles('admin')
   @Post()
   @ApiOperation({ summary: 'Create a brand' })
   @ApiCreatedResponse({ type: Brands })
@@ -93,6 +97,7 @@ export class BrandsApiController {
     return this.brandsService.create(dto);
   }
 
+  @Roles('admin')
   @Patch(':id')
   @ApiOperation({ summary: 'Update a brand' })
   @ApiOkResponse({ type: Brands })
@@ -102,6 +107,7 @@ export class BrandsApiController {
     return this.brandsService.update(id, dto);
   }
 
+  @Roles('admin')
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a brand' })
   @ApiOkResponse({ type: Brands })

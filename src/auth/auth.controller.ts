@@ -5,29 +5,42 @@ import {
   Post,
   Req,
   Res,
+  Body,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
+import { PublicAccess } from './decorators/public-access.decorator';
+import { SessionRequest } from '../types/session';
+import { UserRole } from './decorators/roles.decorator';
 
-interface SessionRequest extends Request {
-  body: {
-    username?: string;
-    password?: string;
-  };
-  session: {
-    user?: string;
-    destroy: (callback: () => void) => void;
-  };
+class LoginDto {
+  username?: string;
+  password?: string;
 }
 
+@ApiTags('auth')
 @Controller()
 export class AuthController {
+  @PublicAccess()
   @Post('login')
-  login(@Req() req: SessionRequest, @Res() res: Response) {
-    const { username, password } = req.body;
+  @ApiOperation({ summary: 'Create a session by username/password' })
+  @ApiBody({ type: LoginDto })
+  login(
+    @Body() body: LoginDto,
+    @Req() req: SessionRequest,
+    @Res() res: Response,
+  ) {
+    const { username, password } = body;
     if (!username || !password) {
       throw new BadRequestException('username and password are required');
     }
+
+    const role: UserRole = username.toLowerCase().includes('admin')
+      ? 'admin'
+      : 'user';
+
     req.session.user = username;
+    req.session.role = role;
     return res.redirect('/');
   }
 
@@ -39,11 +52,20 @@ export class AuthController {
   }
   
   @Get('profile')
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: { message: { type: 'string' }, role: { type: 'string' } },
+    },
+  })
   profile(@Req() req: SessionRequest) {
     if (!req.session.user) {
-      return { message: 'Please login' };
+      return { message: 'Please login', role: null };
     }
 
-    return { message: `Welcome ${req.session.user}` };
+    return {
+      message: `Welcome ${req.session.user}`,
+      role: req.session.role ?? 'user',
+    };
   }
 }

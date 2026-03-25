@@ -19,6 +19,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiCookieAuth,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
@@ -28,8 +29,10 @@ import { Users } from '../entities/users.entity';
 import { CreateUserDto } from '../dto/create-users.dto';
 import { UpdateUserDto } from '../dto/update-users.dto';
 import { UsersService } from '../users.service';
+import { Roles } from '../../auth/decorators/roles.decorator';
 
 @ApiTags('users')
+@ApiCookieAuth('session-cookie')
 @Controller('api/users')
 export class UsersApiController {
   constructor(private readonly usersService: UsersService) {}
@@ -85,6 +88,7 @@ export class UsersApiController {
     return order;
   }
 
+  @Roles('admin')
   @Post()
   @ApiOperation({ summary: 'Create a user' })
   @ApiCreatedResponse({ type: Users })
@@ -93,6 +97,7 @@ export class UsersApiController {
     return this.usersService.create(dto);
   }
 
+  @Roles('admin')
   @Patch(':id')
   @ApiOperation({ summary: 'Update a user' })
   @ApiOkResponse({ type: Users })
@@ -102,6 +107,7 @@ export class UsersApiController {
     return this.usersService.update(id, dto);
   }
 
+  @Roles('admin')
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a user' })
   @ApiOkResponse({ type: Users })

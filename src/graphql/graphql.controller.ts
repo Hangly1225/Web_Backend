@@ -1,14 +1,16 @@
 import { Body, Controller, Get, Post, Render } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GraphqlLiteService } from './graphql-lite.service';
+import { PublicAccess } from '../auth/decorators/public-access.decorator';
 
 class GraphqlRequestDto {
   query: string;
   variables?: Record<string, unknown>;
 }
 
-@ApiTags('graphql')
-@Controller('graphql')
+@ApiTags('graphql-lite')
+@PublicAccess()
+@Controller('graphql-lite')
 export class GraphqlController {
   constructor(private readonly graphqlLiteService: GraphqlLiteService) {}
 
@@ -16,7 +18,7 @@ export class GraphqlController {
   @Render('graphql/sandbox')
   sandbox() {
     return {
-      pageTitle: 'GraphQL Sandbox',
+      pageTitle: 'GraphQL Lite Sandbox',
       schema: this.graphqlLiteService.schema(),
       sampleQuery: `query {
   products(page: 1, limit: 5) {

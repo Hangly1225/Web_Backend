@@ -17,6 +17,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiCookieAuth,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
@@ -26,8 +27,10 @@ import { CreateCategoryDto } from '../dto/create-categories.dto';
 import { UpdateCategoryDto } from '../dto/update-categories.dto';
 import { Categories } from '../entities/categories.entity';
 import { CategoriesService } from '../categories.service';
+import { Roles } from '../../auth/decorators/roles.decorator';
 
 @ApiTags('categories')
+@ApiCookieAuth('session-cookie')
 @Controller('api/categories')
 export class CategoriesApiController {
   constructor(private readonly categoriesService: CategoriesService) {}
@@ -65,6 +68,7 @@ export class CategoriesApiController {
     return category.products;
   }
 
+  @Roles('admin')
   @Post()
   @ApiOperation({ summary: 'Create a category' })
   @ApiCreatedResponse({ type: Categories })
@@ -73,6 +77,7 @@ export class CategoriesApiController {
     return this.categoriesService.create(dto);
   }
 
+  @Roles('admin')
   @Patch(':id')
   @ApiOperation({ summary: 'Update a category' })
   update(
@@ -82,6 +87,7 @@ export class CategoriesApiController {
     return this.categoriesService.update(id, dto);
   }
 
+  @Roles('admin')
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a category' })
   remove(@Param('id', ParseIntPipe) id: number) {

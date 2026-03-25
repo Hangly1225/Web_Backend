@@ -1,5 +1,5 @@
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector} from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { NextFunction, Request, Response } from 'express';
@@ -9,16 +9,31 @@ import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { EtagInterceptor } from './common/interceptors/etag.interceptor';
 import { RequestTimingInterceptor } from './common/interceptors/request-timing.interceptor';
+import { SessionAuthGuard } from './auth/guards/session-auth.guard';
+import { RolesGuard } from './auth/guards/roles.guard';
 
 interface AppRequest extends Request {
   session?: {
     user?: string;
+    role?: 'user' | 'admin';
   };
 }
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.set('trust proxy', 1);
+
+  const corsOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:3000')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  app.enableCors({
+    origin: corsOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'If-None-Match'],
+  });
 
   app.setBaseViewsDir(join(process.cwd(), 'views'));
   app.setViewEngine('ejs');
@@ -40,6 +55,7 @@ async function bootstrap() {
   app.use((req: Request, res: Response, next: NextFunction) => {
     const request = req as AppRequest;
     res.locals.user = request.session?.user ?? null;
+    res.locals.role = request.session?.role ?? null;
     res.locals.menuItems = [
       { label: 'Home', href: '/' },
       { label: 'Products', href: '/products' },
@@ -67,12 +83,21 @@ async function bootstrap() {
     new EtagInterceptor(),
   );
 
+  const reflector = app.get(Reflector);
+  app.useGlobalGuards(new SessionAuthGuard(reflector), new RolesGuard(reflector));
+
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Web Backend API')
     .setDescription(
       'RESTful API for products, brands, categories, orders and users',
     )
     .setVersion('1.0.0')
+    .addCookieAuth('connect.sid', {
+      type: 'apiKey',
+      in: 'cookie',
+      name: 'connect.sid',
+      description: 'Session cookie returned by /login',
+    }, 'session-cookie')
     .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, swaggerDocument);
