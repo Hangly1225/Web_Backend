@@ -17,6 +17,7 @@ import {
   ApiOperation, 
   ApiTags, 
   ApiCookieAuth,
+  ApiProperty,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { PublicAccess } from './decorators/public-access.decorator';
@@ -27,16 +28,19 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 class LoginDto {
+  @ApiProperty({ example: 'demo-user', description: 'Username or email' })
   @IsString()
   @IsNotEmpty()
   username!: string;
 
+  @ApiProperty({ example: 'secret123', description: 'User password' })
   @IsString()
   @IsNotEmpty()
   password!: string;
 }
 
 class SigninDto extends LoginDto {
+  @ApiProperty({ example: 'demo@example.com', description: 'Email address' })
   @IsEmail()
   @IsNotEmpty()
   email!: string;
@@ -67,11 +71,14 @@ export class AuthController {
   }
 
   private async validateCredentials(loginId: string, password: string) {
+    const normalizedLoginId = loginId.trim();
+    const normalizedPassword = password.trim();
+
     let user: { id: number; username: string; email: string; password: string } | null;
     try {
       user = await this.prisma.user.findFirst({
         where: {
-          OR: [{ username: loginId }, { email: loginId }],
+          OR: [{ username: normalizedLoginId }, { email: normalizedLoginId }],
         },
         select: { id: true, username: true, email: true, password: true },
       });
@@ -79,7 +86,7 @@ export class AuthController {
       this.handlePrismaError(error);
     }
 
-    if (!user || user.password !== password) {
+    if (!user || user.password !== normalizedPassword) {
       throw new UnauthorizedException('Invalid username or password');
     }
 
@@ -87,11 +94,19 @@ export class AuthController {
   }
 
   private async createUserAccount(dto: SigninDto) {
+    const normalizedUsername = dto.username.trim();
+    const normalizedEmail = dto.email.trim().toLowerCase();
+    const normalizedPassword = dto.password.trim();
+
+    if (!normalizedUsername || !normalizedEmail || !normalizedPassword) {
+      throw new BadRequestException('Username, email and password are required');
+    }
+
     let existingUser: { username: string; email: string } | null;
     try {
       existingUser = await this.prisma.user.findFirst({
         where: {
-          OR: [{ username: dto.username }, { email: dto.email }],
+          OR: [{ username: normalizedUsername }, { email: normalizedEmail }],
         },
         select: {
           username: true,
@@ -109,9 +124,9 @@ export class AuthController {
     try {
       return await this.prisma.user.create({
         data: {
-          username: dto.username,
-          email: dto.email,
-          password: dto.password,
+          username: normalizedUsername,
+          email: normalizedEmail,
+          password: normalizedPassword,
         },
         select: {
           id: true,
@@ -122,6 +137,35 @@ export class AuthController {
     } catch (error) {
       this.handlePrismaError(error);
     }
+  }
+
+  @PublicAccess()
+  @Post('login')
+  @ApiOperation({ summary: 'Login with username/email and password' })
+  @ApiBody({ type: LoginDto })
+  async login(
+    @Body() body: LoginDto,
+    @Req() req: SessionRequest,
+    @Res() res: Response,
+  ) {
+    const user = await this.validateCredentials(body.username, body.password);
+    req.session.user = user.username;
+    req.session.role = this.resolveRole(user.username);
+    return res.redirect('/');
+  }
+
+  @PublicAccess()
+  @Post('api/auth/login')
+  @ApiOperation({ summary: 'Login via API' })
+  @ApiBody({ type: LoginDto })
+  async apiLogin(@Body() body: LoginDto, @Req() req: SessionRequest) {
+    const user = await this.validateCredentials(body.username, body.password);
+    const role = this.resolveRole(user.username);
+
+    req.session.user = user.username;
+    req.session.role = role;
+
+    return { authenticated: true, user: user.username, role, email: user.email };
   }
 
   @PublicAccess()
@@ -202,7 +246,7 @@ export class AuthController {
     }
 
     return {
-      message: 'Welcome ${req.session.user}',
+      message: `Welcome ${req.session.user}`,
       role: req.session.role ?? 'user',
     };
   }
