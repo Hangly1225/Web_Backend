@@ -8,6 +8,8 @@ import {
   Body,
   UnauthorizedException,
   ConflictException,
+  InternalServerErrorException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { 
   ApiBody, 
@@ -21,6 +23,7 @@ import { PublicAccess } from './decorators/public-access.decorator';
 import { SessionRequest } from '../types/session';
 import { UserRole } from './decorators/roles.decorator';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 class LoginDto {
@@ -44,17 +47,37 @@ class SigninDto extends LoginDto {
 export class AuthController {
   constructor(private readonly prisma: PrismaService) {}
 
+  private handlePrismaError(error: unknown): never {
+    if (
+      error instanceof Prisma.PrismaClientInitializationError ||
+      error instanceof Prisma.PrismaClientRustPanicError
+    ) {
+      throw new ServiceUnavailableException('Database temporarily unavailable');
+    }
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      throw new InternalServerErrorException('Database request failed');
+    }
+
+    throw error;
+  }
+
   private resolveRole(username: string): UserRole {
     return username.toLowerCase().includes('admin') ? 'admin' : 'user';
   }
 
   private async validateCredentials(loginId: string, password: string) {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        OR: [{ username: loginId }, { email: loginId }],
-      },
-      select: { id: true, username: true, email: true, password: true },
-    });
+    let user: { id: number; username: string; email: string; password: string } | null;
+    try {
+      user = await this.prisma.user.findFirst({
+        where: {
+          OR: [{ username: loginId }, { email: loginId }],
+        },
+        select: { id: true, username: true, email: true, password: true },
+      });
+    } catch (error) {
+      this.handlePrismaError(error);
+    }
 
     if (!user || user.password !== password) {
       throw new UnauthorizedException('Invalid username or password');
@@ -64,32 +87,41 @@ export class AuthController {
   }
 
   private async createUserAccount(dto: SigninDto) {
-    const existingUser = await this.prisma.user.findFirst({
-      where: {
-        OR: [{ username: dto.username }, { email: dto.email }],
-      },
-      select: {
-        username: true,
-        email: true,
-      },
-    });
+    let existingUser: { username: string; email: string } | null;
+    try {
+      existingUser = await this.prisma.user.findFirst({
+        where: {
+          OR: [{ username: dto.username }, { email: dto.email }],
+        },
+        select: {
+          username: true,
+          email: true,
+        },
+      });
+    } catch (error) {
+      this.handlePrismaError(error);
+    }
 
     if (existingUser) {
       throw new ConflictException('Username or email already exists');
     }
 
-    return this.prisma.user.create({
-      data: {
-        username: dto.username,
-        email: dto.email,
-        password: dto.password,
-      },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-      },
-    });
+    try {
+      return await this.prisma.user.create({
+        data: {
+          username: dto.username,
+          email: dto.email,
+          password: dto.password,
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+        },
+      });
+    } catch (error) {
+      this.handlePrismaError(error);
+    }
   }
 
   @PublicAccess()
