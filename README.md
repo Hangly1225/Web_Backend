@@ -11,6 +11,7 @@ This project implements a multi-page MVC web app with NestJS, EJS templates, Pri
 - **Lab 4**: RESTful API controllers, Swagger/OpenAPI docs, validation, exception filtering and paginated collection endpoints.
 - **Lab 5**: Lightweight GraphQL-style sandbox and schema endpoint for querying products/categories and running product mutations.
 - **Lab 6**: Request timing headers, ETag-based REST caching, short-lived in-memory caching and file uploads.
+- **Lab 7**: Authentication & authorization
 
 ## Domain model
 Main entities:
@@ -33,47 +34,54 @@ Relations are defined in `prisma/schema.prisma` and visualized in ERD:
 
 ![ER Diagram](./er-diagram.png)
 
-## Runtime configuration
-Required variables:
-- `PORT`: application port (Render provides this automatically)
-- `SESSION_SECRET`: secret for session cookie signing
-- `DATABASE_URL`: PostgreSQL connection string
+## Runtime environment variables
+Required:
+- `PORT`
+- `DATABASE_URL`
+- `SESSION_SECRET`
+
+Optional (object storage):
+- `S3_ENDPOINT`
+- `S3_REGION`
+- `S3_BUCKET`
+- `S3_ACCESS_KEY_ID`
+- `S3_SECRET_ACCESS_KEY`
+- `S3_PUBLIC_BASE_URL`
+
+Optional (CORS):
+- `CORS_ORIGIN` (comma-separated)
 
 ## Main routes
-- MVC home page: `/`
-- MVC products: `/products`
-- MVC brands: `/brands`
-- MVC categories: `/categories`
-- MVC orders: `/orders`
-- MVC users: `/users`
-- Swagger UI: `/api/docs`
-- GraphQL sandbox: `/graphql`
-- File upload page: `/files/upload`
+- Home: `/`
+- MVC pages: `/products`, `/brands`, `/categories`, `/orders`, `/users`
+- Swagger: `/api/docs`
+- GraphQL (Apollo): `/graphql`
+- GraphQL lite sandbox: `/graphql-lite`
+- Upload page: `/files/upload`
 
-- REST API base routes:
-  - `/api/products`
-  - `/api/brands`
-  - `/api/categories`
-  - `/api/orders`
-  - `/api/users`
+## REST API base routes
+- `/api/auth`
+- `/api/products`
+- `/api/brands`
+- `/api/categories`
+- `/api/orders`
+- `/api/users`
+- `/api/files`
 
-## Install
-### development
+## Install & run
 ```bash
-npm run start
-```
-
-### watch mode
-```bash
+npm install
+npm run build
 npm run start:dev
 ```
 
-### production mode
+## Production 
 ```bash
+npm run build
 npm run start:prod
 ```
 
-## Database setup
+## Database commands
 ```bash
 npx prisma generate
 npx prisma migrate dev --name init
