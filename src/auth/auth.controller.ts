@@ -48,10 +48,12 @@ export class AuthController {
     return username.toLowerCase().includes('admin') ? 'admin' : 'user';
   }
 
-  private async validateCredentials(username: string, password: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { username },
-      select: { id: true, username: true, password: true },
+  private async validateCredentials(loginId: string, password: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ username: loginId }, { email: loginId }],
+      },
+      select: { id: true, username: true, email: true, password: true },
     });
 
     if (!user || user.password !== password) {
@@ -88,44 +90,6 @@ export class AuthController {
         email: true,
       },
     });
-  }
-
-  @PublicAccess()
-  @Post('login')
-  @ApiOperation({ summary: 'Create a session by username/password' })
-  @ApiBody({ type: LoginDto })
-  async login(
-    @Body() body: LoginDto,
-    @Req() req: SessionRequest,
-    @Res() res: Response,
-  ) {
-    const { username, password } = body;
-    if (!username || !password) {
-      throw new BadRequestException('username and password are required');
-    }
-
-    const user = await this.validateCredentials(username, password);
-    req.session.user = user.username;
-    req.session.role = this.resolveRole(username);
-    return res.redirect('/');
-  }
-
-  @PublicAccess()
-  @Post('api/auth/login')
-  @ApiOperation({ summary: 'Create an API session and return current principal' })
-  @ApiBody({ type: LoginDto })
-  async apiLogin(@Body() body: LoginDto, @Req() req: SessionRequest) {
-    const { username, password } = body;
-    if (!username || !password) {
-      throw new BadRequestException('username and password are required');
-    }
-
-    const user = await this.validateCredentials(username, password);
-    const role = this.resolveRole(user.username);
-    req.session.user = user.username;
-    req.session.role = role;
-
-    return { authenticated: true, user: user.username, role };
   }
 
   @PublicAccess()
