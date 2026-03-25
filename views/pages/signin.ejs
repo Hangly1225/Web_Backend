@@ -1,4 +1,9 @@
-<%- include('../partials/head', { pageTitle: 'Singin', user, menuItems }) %>
+<%- include('../partials/head', { pageTitle: 'Signin', user, menuItems }) %>
   <h3>Signin page</h3>
-  <p>Trang đăng ký sẽ được mở rộng ở các lab tiếp theo.</p>
+  <form action="/signin" method="post">
+    <input name="username" placeholder="username" required />
+    <input name="email" type="email" placeholder="email" required />
+    <input name="password" type="password" placeholder="password" required />
+    <button type="submit">Signin</button>
+  </form>
 <%- include('../partials/footer') %>

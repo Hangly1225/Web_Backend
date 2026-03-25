@@ -7,6 +7,7 @@ import {
   Res,
   Body,
   UnauthorizedException,
+  ConflictException,
 } from '@nestjs/common';
 import { 
   ApiBody, 
@@ -19,7 +20,7 @@ import { Response } from 'express';
 import { PublicAccess } from './decorators/public-access.decorator';
 import { SessionRequest } from '../types/session';
 import { UserRole } from './decorators/roles.decorator';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { PrismaService } from '../prisma/prisma.service';
 
 class LoginDto {
@@ -30,6 +31,12 @@ class LoginDto {
   @IsString()
   @IsNotEmpty()
   password!: string;
+}
+
+class SigninDto extends LoginDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email!: string;
 }
 
 @ApiTags('auth')
@@ -52,6 +59,35 @@ export class AuthController {
     }
 
     return user;
+  }
+
+  private async createUserAccount(dto: SigninDto) {
+    const existingUser = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ username: dto.username }, { email: dto.email }],
+      },
+      select: {
+        username: true,
+        email: true,
+      },
+    });
+
+    if (existingUser) {
+      throw new ConflictException('Username or email already exists');
+    }
+
+    return this.prisma.user.create({
+      data: {
+        username: dto.username,
+        email: dto.email,
+        password: dto.password,
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+      },
+    });
   }
 
   @PublicAccess()
@@ -90,6 +126,36 @@ export class AuthController {
     req.session.role = role;
 
     return { authenticated: true, user: user.username, role };
+  }
+
+  @PublicAccess()
+  @Post('signin')
+  @ApiOperation({ summary: 'Register a new account' })
+  @ApiBody({ type: SigninDto })
+  async signin(
+    @Body() body: SigninDto,
+    @Req() req: SessionRequest,
+    @Res() res: Response,
+  ) {
+    const user = await this.createUserAccount(body);
+
+    req.session.user = user.username;
+    req.session.role = this.resolveRole(user.username);
+    return res.redirect('/');
+  }
+
+  @PublicAccess()
+  @Post('api/auth/signin')
+  @ApiOperation({ summary: 'Register a new account via API' })
+  @ApiBody({ type: SigninDto })
+  async apiSignin(@Body() body: SigninDto, @Req() req: SessionRequest) {
+    const user = await this.createUserAccount(body);
+    const role = this.resolveRole(user.username);
+
+    req.session.user = user.username;
+    req.session.role = role;
+
+    return { authenticated: true, user: user.username, role, email: user.email };
   }
 
   @ApiCookieAuth('session-cookie')
