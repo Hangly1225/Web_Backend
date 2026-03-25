@@ -34,10 +34,16 @@ export class OrdersController {
   @Get('add')
   @Render('orders/add')
   async addForm() {
-    const users = await this.prisma.user.findMany({
-      orderBy: { username: 'asc' },
-    });
-    return { pageTitle: 'Create order', users, statuses: this.statuses };
+    const [users, products] = await Promise.all([
+      this.prisma.user.findMany({
+        orderBy: { username: 'asc' },
+      }),
+      this.prisma.product.findMany({
+        orderBy: { name: 'asc' },
+        select: { id: true, name: true, price: true },
+      }),
+    ]);
+    return { pageTitle: 'Create order', users, products, statuses: this.statuses };
   }
 
   @Post()
@@ -56,15 +62,24 @@ export class OrdersController {
   @Get(':id/edit')
   @Render('orders/edit')
   async editForm(@Param('id', ParseIntPipe) id: number) {
-    const [order, users] = await Promise.all([
+    const [order, users, products] = await Promise.all([
       this.ordersService.findOne(id),
       this.prisma.user.findMany({ orderBy: { username: 'asc' } }),
+      this.prisma.product.findMany({
+        orderBy: { name: 'asc' },
+        select: { id: true, name: true, price: true },
+      }),
     ]);
+
+    const firstItem = order.items[0];
 
     return {
       pageTitle: `Edit order #${id}`,
       order,
       users,
+      products,
+      selectedProductId: firstItem?.productId ?? null,
+      selectedQuantity: firstItem?.quantity ?? '',
       statuses: this.statuses,
     };
   }

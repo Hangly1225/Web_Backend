@@ -13,6 +13,17 @@
         <option value="<%= status %>" <%= status === order.status ? 'selected' : '' %>><%= status %></option>
       <% }) %>
     </select>
+    <label>Product</label>
+    <select name="productId">
+      <option value="">-- Keep current items --</option>
+      <% products.forEach(function(product) { %>
+        <option value="<%= product.id %>" <%= selectedProductId === product.id ? 'selected' : '' %>>
+          <%= product.name %> ($<%= product.price %>)
+        </option>
+      <% }) %>
+    </select>
+    <label>Quantity</label>
+    <input name="quantity" type="number" min="1" value="<%= selectedQuantity %>" />
     <button type="submit">Save</button>
   </form>
 <%- include('../partials/footer') %>

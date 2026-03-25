@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { buildPageMeta, getPagination } from '../common/pagination';
 import { PrismaService } from '../prisma/prisma.service';
@@ -60,22 +60,99 @@ export class OrdersService {
   }
 
   create(dto: CreateOrderDto) {
-    return this.prisma.order.create({
-      data: {
-        userId: dto.userId,
-        status: dto.status,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      if (
+        (dto.productId === undefined) !== (dto.quantity === undefined)
+      ) {
+        throw new BadRequestException(
+          'productId and quantity must be provided together',
+        );
+      }
+
+      let itemCreateData:
+        | { product: { connect: { id: number } }; quantity: number; unitPrice: string }
+        | undefined;
+      if (dto.productId !== undefined) {
+        const product = await tx.product.findUnique({
+          where: { id: dto.productId },
+          select: { price: true },
+        });
+
+        if (!product) {
+          throw new BadRequestException(
+            `Product #${dto.productId} does not exist`,
+          );
+        }
+        itemCreateData = {
+          product: { connect: { id: dto.productId } },
+          quantity: dto.quantity as number,
+          unitPrice: product.price.toString(),
+        };
+      }
+
+      return tx.order.create({
+        data: {
+          user: { connect: { id: dto.userId } },
+          status: dto.status,
+          ...(itemCreateData
+            ? {
+                items: {
+                  create: [itemCreateData],
+                },
+              }
+            : {}),
+        },
+      });
     });
   }
 
   async update(id: number, dto: UpdateOrderDto) {
     await this.findOne(id);
-    return this.prisma.order.update({
-      where: { id },
-      data: {
-        ...(dto.userId !== undefined ? { userId: dto.userId } : {}),
-        ...(dto.status !== undefined ? { status: dto.status } : {}),
-      },
+    return this.prisma.$transaction(async (tx) => {
+      if ((dto.productId === undefined) !== (dto.quantity === undefined)) {
+        throw new BadRequestException(
+          'productId and quantity must be provided together',
+        );
+      }
+
+      let itemCreateData:
+        | { product: { connect: { id: number } }; quantity: number; unitPrice: string }
+        | undefined;
+      if (dto.productId !== undefined) {
+        const product = await tx.product.findUnique({
+          where: { id: dto.productId },
+          select: { price: true },
+        });
+
+        if (!product) {
+          throw new BadRequestException(
+            `Product #${dto.productId} does not exist`,
+          );
+        }
+        itemCreateData = {
+          product: { connect: { id: dto.productId } },
+          quantity: dto.quantity as number,
+          unitPrice: product.price.toString(),
+        };
+      }
+
+      return tx.order.update({
+        where: { id },
+        data: {
+          ...(dto.userId !== undefined
+            ? { user: { connect: { id: dto.userId } } }
+            : {}),
+          ...(dto.status !== undefined ? { status: dto.status } : {}),
+          ...(itemCreateData
+            ? {
+                items: {
+                  deleteMany: {},
+                  create: [itemCreateData],
+                },
+              }
+            : {}),
+        },
+      });
     });
   }
 

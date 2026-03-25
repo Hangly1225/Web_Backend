@@ -13,6 +13,15 @@
         <option value="<%= status %>"><%= status %></option>
       <% }) %>
     </select>
+    <label>Product</label>
+    <select name="productId">
+      <option value="">-- Without product --</option>
+      <% products.forEach(function(product) { %>
+        <option value="<%= product.id %>"><%= product.name %> ($<%= product.price %>)</option>
+      <% }) %>
+    </select>
+    <label>Quantity</label>
+    <input name="quantity" type="number" min="1" placeholder="e.g. 2" />
     <button type="submit">Create</button>
   </form>
 <%- include('../partials/footer') %>
