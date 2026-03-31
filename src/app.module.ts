@@ -31,7 +31,12 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
       sortSchema: true,
       csrfPrevention: false,
       introspection: true,
-      plugins: [new GraphqlComplexityPlugin()],
+      plugins: [
+        ApolloServerPluginLandingPageLocalDefault({
+          embed: true,
+        }),
+        new GraphqlComplexityPlugin(),
+      ],
     }),
     ProductsModule,
     CategoriesModule,

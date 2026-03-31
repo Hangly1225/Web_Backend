@@ -4,9 +4,11 @@ import { CategoriesModule } from '../categories/categories.module';
 import { ProductsModule } from '../products/products.module';
 import { CategoriesResolver } from './resolvers/categories.resolver';
 import { ProductsResolver } from './resolvers/products.resolver';
+import { GraphqlController } from './graphql.controller';
 
 @Module({
   imports: [ProductsModule, CategoriesModule, BrandsModule],
+  controllers: [GraphqlController],
   providers: [ProductsResolver, CategoriesResolver],
 })
 export class GraphqlModule {}
