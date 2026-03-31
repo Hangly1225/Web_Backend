@@ -66,6 +66,7 @@ async function bootstrap() {
       { label: 'Swagger', href: '/api/docs' },
       { label: 'GraphQL', href: '/graphql' },
       { label: 'Uploads', href: '/files/upload' },
+      { label: 'GraphQL Lite', href: '/graphql-lite' },
     ];
     next();
   });

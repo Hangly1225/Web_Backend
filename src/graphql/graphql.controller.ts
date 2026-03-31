@@ -17,7 +17,7 @@ class GraphqlRequestDto {
 @ApiTags('graphql-lite')
 @ApiExcludeController()
 @PublicAccess()
-@Controller('graphql')
+@Controller('graphql-lite')
 export class GraphqlController {
   constructor(private readonly graphqlLiteService: GraphqlLiteService) {}
 

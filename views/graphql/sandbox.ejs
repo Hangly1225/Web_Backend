@@ -56,7 +56,7 @@
     <div class="container">
       <h1>GraphQL Sandbox</h1>
       <p>
-        Endpoint: <code>/api/graphql</code> |
+        Endpoint: <code>/graphql-lite</code> |
         <a href="/api/docs">Swagger REST docs</a>
       </p>
       <div class="grid">
@@ -94,7 +94,7 @@
           return;
         }
 
-        const response = await fetch('/api/graphql', {
+        const response = await fetch('/graphql-lite', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
