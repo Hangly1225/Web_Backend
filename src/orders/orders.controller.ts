@@ -14,8 +14,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-orders.dto';
 import { UpdateOrderDto } from './dto/update-orders.dto';
 import { OrdersService } from './orders.service';
+import { ApiExcludeController } from '@nestjs/swagger';
 
 @Controller('orders')
+@ApiExcludeController()
 export class OrdersController {
   private readonly statuses = Object.values(OrderStatus);
 

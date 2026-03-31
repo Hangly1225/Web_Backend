@@ -1,51 +1,113 @@
-<p>Execute GraphQL-style queries and mutations directly against <code>/api/graphql</code>.</p>
-
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;">
-    <section>
-      <h3>Query editor</h3>
-      <textarea id="query" style="width:100%; min-height:260px;"><%= sampleQuery %></textarea>
-      <h3>Variables</h3>
-      <textarea id="variables" style="width:100%; min-height:120px;"><%= sampleVariables %></textarea>
-      <p>
-        <button id="run-query" type="button">Run query</button>
-      </p>
-      <pre id="result" style="background:#111827; color:#f9fafb; padding:12px; overflow:auto; min-height:240px;"></pre>
-    </section>
-
-    <section>
-      <h3>Schema</h3>
-      <pre style="background:#f5f5f5; padding:12px; overflow:auto; min-height:600px;"><%= schema %></pre>
-    </section>
-  </div>
-
-  <script>
-    const button = document.getElementById('run-query');
-    const queryEditor = document.getElementById('query');
-    const variablesEditor = document.getElementById('variables');
-    const result = document.getElementById('result');
-
-    button.addEventListener('click', async () => {
-      result.textContent = 'Running...';
-      let variables = {};
-
-      try {
-        variables = JSON.parse(variablesEditor.value || '{}');
-      } catch (error) {
-        result.textContent = `Invalid variables JSON: ${error.message}`;
-        return;
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= pageTitle %></title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
       }
+      .container {
+        max-width: 1200px;
+        margin: 24px auto;
+        padding: 0 16px;
+      }
+      a { color: #38bdf8; }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      textarea,
+      pre {
+        width: 100%;
+        min-height: 220px;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        background: #111827;
+        color: #e5e7eb;
+        padding: 12px;
+        box-sizing: border-box;
+      }
+      pre {
+        overflow: auto;
+      }
+      button {
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 14px;
+        cursor: pointer;
+        background: #22c55e;
+        color: #052e16;
+        font-weight: 700;
+      }
+      code {
+        background: #1e293b;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>GraphQL Sandbox</h1>
+      <p>
+        Endpoint: <code>/api/graphql</code> |
+        <a href="/api/docs">Swagger REST docs</a>
+      </p>
+      <div class="grid">
+        <section>
+          <h3>Query editor</h3>
+          <textarea id="query"><%= sampleQuery %></textarea>
+          <h3>Variables (JSON)</h3>
+          <textarea id="variables"><%= sampleVariables %></textarea>
+          <p><button id="run-query" type="button">Run query</button></p>
+          <h3>Result</h3>
+          <pre id="result"></pre>
+        </section>
 
-      const response = await fetch('/api/graphql', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: queryEditor.value,
-          variables,
-          operationName: 'SandboxOperation'
-        })
+        <section>
+          <h3>Schema (SDL)</h3>
+          <pre><%= schema %></pre>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      const button = document.getElementById('run-query');
+      const queryEditor = document.getElementById('query');
+      const variablesEditor = document.getElementById('variables');
+      const result = document.getElementById('result');
+
+     button.addEventListener('click', async () => {
+        result.textContent = 'Running...';
+        let variables = {};
+
+        try {
+          variables = JSON.parse(variablesEditor.value || '{}');
+        } catch (error) {
+          result.textContent = `Invalid variables JSON: ${error.message}`;
+          return;
+        }
+
+        const response = await fetch('/api/graphql', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            query: queryEditor.value,
+            variables,
+            operationName: 'SandboxOperation',
+          }),
+        });
+
+
+        const payload = await response.json();
+        result.textContent = JSON.stringify(payload, null, 2);
       });
-      const payload = await response.json();
-      result.textContent = JSON.stringify(payload, null, 2);
-    });
-  </script>
-<%- include('../partials/footer') %>
+    </script>
+  </body>
+</html>

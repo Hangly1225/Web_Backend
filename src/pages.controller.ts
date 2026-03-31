@@ -1,6 +1,8 @@
 import { Controller, Get, Query, Render } from '@nestjs/common';
+import { ApiExcludeController } from '@nestjs/swagger';
 
 @Controller()
+@ApiExcludeController()
 export class PagesController {
   @Get('index')
   @Render('pages/index')

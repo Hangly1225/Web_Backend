@@ -1,5 +1,6 @@
 import { Controller, Get, Render, Req } from '@nestjs/common';
 import { Request } from 'express';
+import { ApiExcludeController } from '@nestjs/swagger';
 
 interface ProductCard {
   title: string;
@@ -14,6 +15,7 @@ interface HomeRequest extends Request {
 }
 
 @Controller()
+@ApiExcludeController()
 export class HomeController {
   @Get()
   @Render('home')

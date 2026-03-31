@@ -17,8 +17,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-products.dto';
 import { UpdateProductDto } from './dto/update-products.dto';
 import { ProductsService } from './products.service';
+import { ApiExcludeController } from '@nestjs/swagger';
 
 @Controller('products')
+@ApiExcludeController()
 export class ProductsController {
   constructor(
     private readonly productsService: ProductsService,

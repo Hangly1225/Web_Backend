@@ -13,8 +13,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateCategoryDto } from './dto/create-categories.dto';
 import { UpdateCategoryDto } from './dto/update-categories.dto';
 import { CategoriesService } from './categories.service';
+import { ApiExcludeController } from '@nestjs/swagger';
 
 @Controller('categories')
+@ApiExcludeController()
 export class CategoriesController {
   constructor(
     private readonly categoriesService: CategoriesService,

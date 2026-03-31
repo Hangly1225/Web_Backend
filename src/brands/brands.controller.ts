@@ -12,8 +12,10 @@ import { Response } from 'express';
 import { CreateBrandDto } from './dto/create-brands.dto';
 import { UpdateBrandDto } from './dto/update-brands.dto';
 import { BrandsService } from './brands.service';
+import { ApiExcludeController } from '@nestjs/swagger';
 
 @Controller('brands')
+@ApiExcludeController()
 export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
 

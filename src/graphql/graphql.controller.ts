@@ -1,5 +1,11 @@
 import { Body, Controller, Get, Post, Render } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiExcludeController,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { GraphqlLiteService } from './graphql-lite.service';
 import { PublicAccess } from '../auth/decorators/public-access.decorator';
 
@@ -9,6 +15,7 @@ class GraphqlRequestDto {
 }
 
 @ApiTags('graphql-lite')
+@ApiExcludeController()
 @PublicAccess()
 @Controller('graphql')
 export class GraphqlController {
