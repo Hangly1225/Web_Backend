@@ -1,43 +1,43 @@
-import { Controller, Get, Query, Render } from '@nestjs/common';
+import { Controller, Get, Query, Render, Redirect } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
 
 @Controller()
 @ApiExcludeController()
 export class PagesController {
   @Get('index')
-  @Render('pages/index')
-  index(@Query('user') user?: string) {
-    return { user: user ?? null };
+  @Redirect('/', 302)
+  index() {
+    return;
   }
 
   @Get('shop')
-  @Render('pages/shop')
-  shop(@Query('user') user?: string) {
-    return { user: user ?? null };
+  @Redirect('/', 302)
+  shop() {
+    return;
   }
 
   @Get('cart')
-  @Render('pages/cart')
-  cart(@Query('user') user?: string) {
-    return { user: user ?? null };
+  @Redirect('/orders', 302)
+  cart() {
+    return;
   }
 
   @Get('brand')
-  @Render('pages/brand')
-  brand(@Query('user') user?: string) {
-    return { user: user ?? null };
+  @Redirect('/brands', 302)
+  brand() {
+    return;
   }
 
   @Get('category')
-  @Render('pages/category')
-  category(@Query('user') user?: string) {
-    return { user: user ?? null };
+  @Redirect('/categories', 302)
+  category() {
+    return;
   }
 
   @Get('list')
-  @Render('pages/list')
-  list(@Query('user') user?: string) {
-    return { user: user ?? null };
+  @Redirect('/products', 302)
+  list() {
+    return;
   }
 
   @Get('login')
