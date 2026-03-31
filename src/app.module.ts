@@ -24,6 +24,7 @@ import { LoginRedirectMiddleware } from './auth/middleware/login-redirect.middle
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
+      path: '/api/graphql',
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
       csrfPrevention: false,

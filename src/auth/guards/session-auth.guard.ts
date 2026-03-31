@@ -27,6 +27,9 @@ import {
       }
   
       const request = context.switchToHttp().getRequest<SessionRequest>();
+      if (request.path.startsWith('/api/graphql')) {
+        return true;
+      }
       const isApiRequest = request.path.startsWith('/api/');
       if (!isApiRequest) {
         return true;
