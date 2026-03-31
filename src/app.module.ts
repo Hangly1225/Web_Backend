@@ -20,10 +20,8 @@ import { LoginRedirectMiddleware } from './auth/middleware/login-redirect.middle
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-      serveStaticOptions: {
-        index: false,
-      },
+      rootPath: join(__dirname, '..', 'public', 'assets'),
+      serveRoot: '/assets',
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
