@@ -4,6 +4,7 @@ import { buildPageMeta, getPagination } from '../common/pagination';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-users.dto';
 import { UpdateUserDto } from './dto/update-users.dto';
+import { hashPassword } from '../auth/password.util';
 
 @Injectable()
 export class UsersService {
@@ -11,7 +12,12 @@ export class UsersService {
 
   findAll() {
     return this.prisma.user.findMany({
-      include: {
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
         orders: true,
         cartItems: true,
       },
@@ -25,7 +31,12 @@ export class UsersService {
       this.prisma.user.findMany({
         skip,
         take,
-        include: {
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          createdAt: true,
+          updatedAt: true,
           orders: true,
           cartItems: true,
         },
@@ -40,7 +51,12 @@ export class UsersService {
   async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
-      include: {
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
         orders: true,
         cartItems: {
           include: { product: true },
@@ -60,7 +76,14 @@ export class UsersService {
       data: {
         username: dto.username,
         email: dto.email,
-        password: dto.password,
+        password: hashPassword(dto.password),
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
   }
@@ -72,13 +95,31 @@ export class UsersService {
       data: {
         ...(dto.username !== undefined ? { username: dto.username } : {}),
         ...(dto.email !== undefined ? { email: dto.email } : {}),
-        ...(dto.password !== undefined ? { password: dto.password } : {}),
+        ...(dto.password !== undefined
+          ? { password: hashPassword(dto.password) }
+          : {}),
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
   }
 
   async remove(id: number) {
     await this.findOne(id);
-    return this.prisma.user.delete({ where: { id } });
+    return this.prisma.user.delete({
+      where: { id },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
   }
 }

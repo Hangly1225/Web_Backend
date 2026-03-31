@@ -26,6 +26,7 @@ import { UserRole } from './decorators/roles.decorator';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { hashPassword, verifyPassword } from './password.util';
 
 class LoginDto {
   @ApiProperty({ example: 'demo-user', description: 'Username or email' })
@@ -86,7 +87,7 @@ export class AuthController {
       this.handlePrismaError(error);
     }
 
-    if (!user || user.password !== normalizedPassword) {
+    if (!user || !verifyPassword(normalizedPassword, user.password)) {
       throw new UnauthorizedException('Invalid username or password');
     }
 
@@ -126,7 +127,7 @@ export class AuthController {
         data: {
           username: normalizedUsername,
           email: normalizedEmail,
-          password: normalizedPassword,
+          password: hashPassword(normalizedPassword),
         },
         select: {
           id: true,
