@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { CategoryType } from './category.type';
 
 @ObjectType({ description: 'Brand entity' })
 export class BrandType {
@@ -13,4 +14,10 @@ export class BrandType {
 
   @Field({ description: 'Last update timestamp' })
   updatedAt: Date;
+
+  @Field(() => [CategoryType], {
+    nullable: true,
+    description: 'Categories linked to this brand',
+  })
+  categories?: CategoryType[];
 }

@@ -21,7 +21,6 @@ import { GraphqlModule } from './graphql/graphql.module';
 import { StorageModule } from './storage/storage.module';
 import { GraphqlComplexityPlugin } from './graphql/graphql-complexity.plugin';
 import { LoginRedirectMiddleware } from './auth/middleware/login-redirect.middleware';
-import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
 @Module({
   imports: [
@@ -36,12 +35,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
       sortSchema: true,
       csrfPrevention: false,
       introspection: true,
-      plugins: [
-        ApolloServerPluginLandingPageLocalDefault({
-          embed: true,
-        }),
-        new GraphqlComplexityPlugin(),
-      ],
+      plugins: [new GraphqlComplexityPlugin()],
     }),
     ProductsModule,
     CategoriesModule,
