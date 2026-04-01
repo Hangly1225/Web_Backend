@@ -35,6 +35,7 @@ import { LoginRedirectMiddleware } from './auth/middleware/login-redirect.middle
       sortSchema: true,
       csrfPrevention: false,
       introspection: true,
+      playground: true,
       plugins: [new GraphqlComplexityPlugin()],
     }),
     ProductsModule,
