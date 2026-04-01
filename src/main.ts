@@ -23,13 +23,19 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.set('trust proxy', 1);
 
-  const corsOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:3000')
-    .split(',')
-    .map((item) => item.trim())
-    .filter(Boolean);
+  const corsOrigins = new Set(
+    (process.env.CORS_ORIGIN ?? 'http://localhost:3000')
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean),
+  );
+  corsOrigins.add('https://studio.apollographql.com');
+  if (process.env.RENDER_EXTERNAL_URL) {
+    corsOrigins.add(process.env.RENDER_EXTERNAL_URL);
+  }
 
   app.enableCors({
-    origin: corsOrigins,
+    origin: Array.from(corsOrigins),
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'If-None-Match'],

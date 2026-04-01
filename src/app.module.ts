@@ -18,6 +18,7 @@ import { GraphqlComplexityPlugin } from './graphql/graphql-complexity.plugin';
 import { LoginRedirectMiddleware } from './auth/middleware/login-redirect.middleware';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
+
 @Module({
   imports: [
     ServeStaticModule.forRoot({
