@@ -4,6 +4,8 @@ import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { CreateProductDto } from '../products/dto/create-products.dto';
 import { UpdateProductDto } from '../products/dto/update-products.dto';
 import { ProductsService } from '../products/products.service';
+import { CreateCategoryDto } from '../categories/dto/create-categories.dto';
+import { UpdateCategoryDto } from '../categories/dto/update-categories.dto';
 
 interface FieldNode {
   name: string;
@@ -91,6 +93,16 @@ input UpdateProductInput {
   categoryId: Int
 }
 
+input CreateCategoryInput {
+  name: String!
+  brandId: Int!
+}
+
+input UpdateCategoryInput {
+  name: String
+  brandId: Int
+}
+
 type Query {
   products(page: Int = 1, limit: Int = 10): ProductPage!
   product(id: Int!): Product!
@@ -102,6 +114,9 @@ type Mutation {
   createProduct(input: CreateProductInput!): Product!
   updateProduct(id: Int!, input: UpdateProductInput!): Product!
   deleteProduct(id: Int!): Product!
+  createCategory(input: CreateCategoryInput!): Category!
+  updateCategory(id: Int!, input: UpdateCategoryInput!): Category!
+  deleteCategory(id: Int!): Category!
 }
 `.trim();
   }
@@ -161,6 +176,17 @@ type Mutation {
         );
       case 'deleteProduct':
         return this.productsService.remove(Number(parsed.args.id));
+      case 'createCategory':
+        return this.categoriesService.create(
+          parsed.args.input as CreateCategoryDto,
+        );
+      case 'updateCategory':
+        return this.categoriesService.update(
+          Number(parsed.args.id),
+          parsed.args.input as UpdateCategoryDto,
+        );
+      case 'deleteCategory':
+        return this.categoriesService.remove(Number(parsed.args.id));
       default:
         throw new BadRequestException(
           `Unsupported root field: ${parsed.fieldName}`,
@@ -214,7 +240,9 @@ type Mutation {
   ): Record<string, unknown> {
     const jsonLike = source
       .replace(/([A-Za-z_][A-Za-z0-9_]*)\s*:/g, '"$1":')
-      .replace(/\$([A-Za-z_][A-Za-z0-9_]*)/g, (_full, name: string) => JSON.stringify(variables[name]))
+      .replace(/\$([A-Za-z_][A-Za-z0-9_]*)/g, (_full, name: string) =>
+        JSON.stringify(variables[name]),
+      )
       .replace(/'/g, '"');
 
     try {
