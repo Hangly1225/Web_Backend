@@ -9,7 +9,7 @@ This project implements a multi-page MVC web app with NestJS, EJS templates, Pri
 - **Lab 2**: Domain model with relational schema, Prisma migrations and ER diagram.
 - **Lab 3**: Subdomain modules, MVC CRUD pages, service-layer business logic, and SSE realtime product updates.
 - **Lab 4**: RESTful API controllers, Swagger/OpenAPI docs, validation, exception filtering and paginated collection endpoints.
-- **Lab 5**: Lightweight GraphQL-style sandbox and schema endpoint for querying products/categories and running product mutations.
+- **Lab 5**: Code-first GraphQL schema with Apollo Sandbox, queries, mutations, field resolvers, pagination and complexity limits.
 - **Lab 6**: Request timing headers, ETag-based REST caching, short-lived in-memory caching and file uploads.
 - **Lab 7**: Authentication & authorization
 
@@ -56,7 +56,6 @@ Optional (CORS):
 - MVC pages: `/products`, `/brands`, `/categories`, `/orders`, `/users`
 - Swagger: `/api/docs`
 - GraphQL (Apollo): `/graphql`
-- GraphQL lite sandbox: `/graphql-lite`
 - Upload page: `/files/upload`
 
 ## REST API base routes

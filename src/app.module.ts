@@ -1,4 +1,9 @@
-import { Module, MiddlewareConsumer, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  Module,
+  MiddlewareConsumer,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -18,7 +23,6 @@ import { GraphqlComplexityPlugin } from './graphql/graphql-complexity.plugin';
 import { LoginRedirectMiddleware } from './auth/middleware/login-redirect.middleware';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
-
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -27,7 +31,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      path: 'graphql',
+      path: '/graphql',
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
       csrfPrevention: false,
@@ -53,14 +57,16 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoginRedirectMiddleware).forRoutes(
-      { path: 'products', method: RequestMethod.ALL },
-      { path: 'brands', method: RequestMethod.ALL },
-      { path: 'categories', method: RequestMethod.ALL },
-      { path: 'orders', method: RequestMethod.ALL },
-      { path: 'users', method: RequestMethod.ALL },
-      { path: 'files/upload', method: RequestMethod.ALL },
-    );
+    consumer
+      .apply(LoginRedirectMiddleware)
+      .forRoutes(
+        { path: 'products', method: RequestMethod.ALL },
+        { path: 'brands', method: RequestMethod.ALL },
+        { path: 'categories', method: RequestMethod.ALL },
+        { path: 'orders', method: RequestMethod.ALL },
+        { path: 'users', method: RequestMethod.ALL },
+        { path: 'files/upload', method: RequestMethod.ALL },
+      );
   }
 }
 

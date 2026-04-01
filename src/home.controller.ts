@@ -28,9 +28,9 @@ export class HomeController {
         image: '/assets/imgs/item1.webp',
       },
       {
-        title: 'Classic Bracelet',
-        price: '$79',
-        image: '/assets/imgs/Classic Bracelet.webp',
+        title: 'Elegant Ring',
+        price: '$49',
+        image: '/assets/imgs/item3.webp',
       },
       { 
         title: 'Elegant Ring', 
@@ -52,7 +52,6 @@ export class HomeController {
         { label: 'Swagger', href: '/api/docs' },
         { label: 'GraphQL', href: '/graphql' },
         { label: 'Uploads', href: '/files/upload' },
-        { label: 'GraphQL Lite', href: '/graphql-lite' },
       ],
       products,
     };

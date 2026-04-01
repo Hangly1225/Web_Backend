@@ -1,5 +1,5 @@
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory, Reflector} from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { NextFunction, Request, Response } from 'express';
@@ -72,7 +72,6 @@ async function bootstrap() {
       { label: 'Swagger', href: '/api/docs' },
       { label: 'GraphQL', href: '/graphql' },
       { label: 'Uploads', href: '/files/upload' },
-      { label: 'GraphQL Lite', href: '/graphql-lite' },
     ];
     next();
   });
@@ -91,7 +90,10 @@ async function bootstrap() {
   );
 
   const reflector = app.get(Reflector);
-  app.useGlobalGuards(new SessionAuthGuard(reflector), new RolesGuard(reflector));
+  app.useGlobalGuards(
+    new SessionAuthGuard(reflector),
+    new RolesGuard(reflector),
+  );
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Web Backend API')
@@ -99,12 +101,16 @@ async function bootstrap() {
       'RESTful API for products, brands, categories, orders and users',
     )
     .setVersion('1.0.0')
-    .addCookieAuth('connect.sid', {
-      type: 'apiKey',
-      in: 'cookie',
-      name: 'connect.sid',
-      description: 'Session cookie returned by /login',
-    }, 'session-cookie')
+    .addCookieAuth(
+      'connect.sid',
+      {
+        type: 'apiKey',
+        in: 'cookie',
+        name: 'connect.sid',
+        description: 'Session cookie returned by /login',
+      },
+      'session-cookie',
+    )
     .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, swaggerDocument);
