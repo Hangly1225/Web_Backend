@@ -6,11 +6,13 @@ import {
   Req,
   Res,
   Body,
+  Logger,
   UnauthorizedException,
   ConflictException,
   InternalServerErrorException,
   ServiceUnavailableException,
 } from '@nestjs/common';
+
 import { 
   ApiBody, 
   ApiOkResponse, 
@@ -19,6 +21,7 @@ import {
   ApiCookieAuth,
   ApiProperty,
 } from '@nestjs/swagger';
+
 import { Response } from 'express';
 import { PublicAccess } from './decorators/public-access.decorator';
 import { SessionRequest } from '../types/session';
@@ -50,6 +53,7 @@ class SignupDto extends LoginDto {
 @ApiTags('auth')
 @Controller()
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
   constructor(private readonly prisma: PrismaService) {}
 
   private handlePrismaError(error: unknown): never {
@@ -61,6 +65,12 @@ export class AuthController {
     }
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      this.logger.error(`Prisma request failed: ${error.code} - ${error.message}`);
+
+      if (error.code === 'P2002') {
+        throw new ConflictException('Username or email already exists');
+      }
+
       throw new InternalServerErrorException('Database request failed');
     }
 
