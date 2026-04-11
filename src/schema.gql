@@ -1,0 +1,234 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""Paginated brand collection"""
+type BrandPageType {
+  """Brands on the current page"""
+  data: [BrandType!]!
+
+  """Pagination metadata"""
+  meta: PageMetaType!
+}
+
+"""Brand entity"""
+type BrandType {
+  """Categories linked to this brand"""
+  categories: [CategoryType!]
+
+  """Creation timestamp"""
+  createdAt: DateTime!
+
+  """Brand identifier"""
+  id: Int!
+
+  """Brand name"""
+  name: String!
+
+  """Last update timestamp"""
+  updatedAt: DateTime!
+}
+
+"""Paginated category collection"""
+type CategoryPageType {
+  """Categories on the current page"""
+  data: [CategoryType!]!
+
+  """Pagination metadata"""
+  meta: PageMetaType!
+}
+
+"""Category entity"""
+type CategoryType {
+  """Brand linked to this category"""
+  brand: BrandType
+
+  """Related brand identifier"""
+  brandId: Int!
+
+  """Creation timestamp"""
+  createdAt: DateTime!
+
+  """Category identifier"""
+  id: Int!
+
+  """Category name"""
+  name: String!
+
+  """Last update timestamp"""
+  updatedAt: DateTime!
+}
+
+"""Input payload to create a brand"""
+input CreateBrandInput {
+  """Brand name"""
+  name: String!
+}
+
+"""Input payload to create a category"""
+input CreateCategoryInput {
+  """Related brand identifier"""
+  brandId: Int!
+
+  """Category name"""
+  name: String!
+}
+
+"""Input payload to create a product"""
+input CreateProductInput {
+  """Related category identifier"""
+  categoryId: Int!
+
+  """Product description"""
+  description: String!
+
+  """Product name"""
+  name: String!
+
+  """Product price"""
+  price: Float!
+
+  """Available stock quantity"""
+  stock: Int!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Mutation {
+  """Create a new brand"""
+  createBrand(input: CreateBrandInput!): BrandType!
+
+  """Create a new category"""
+  createCategory(input: CreateCategoryInput!): CategoryType!
+
+  """Create a new product"""
+  createProduct(input: CreateProductInput!): ProductType!
+
+  """Delete a brand"""
+  deleteBrand(id: Int!): BrandType!
+
+  """Delete a category"""
+  deleteCategory(id: Int!): CategoryType!
+
+  """Delete a product"""
+  deleteProduct(id: Int!): ProductType!
+
+  """Update an existing brand"""
+  updateBrand(id: Int!, input: UpdateBrandInput!): BrandType!
+
+  """Update an existing category"""
+  updateCategory(id: Int!, input: UpdateCategoryInput!): CategoryType!
+
+  """Update an existing product"""
+  updateProduct(id: Int!, input: UpdateProductInput!): ProductType!
+}
+
+"""Pagination metadata"""
+type PageMetaType {
+  """Items per page"""
+  limit: Int!
+
+  """Current page number"""
+  page: Int!
+
+  """Total number of items"""
+  totalItems: Int!
+
+  """Total number of pages"""
+  totalPages: Int!
+}
+
+"""Paginated product collection"""
+type ProductPageType {
+  """Products on the current page"""
+  data: [ProductType!]!
+
+  """Pagination metadata"""
+  meta: PageMetaType!
+}
+
+"""Product entity"""
+type ProductType {
+  """Category linked to this product"""
+  category: CategoryType
+
+  """Related category identifier"""
+  categoryId: Int!
+
+  """Creation timestamp"""
+  createdAt: DateTime!
+
+  """Product description"""
+  description: String!
+
+  """Product identifier"""
+  id: Int!
+
+  """Product name"""
+  name: String!
+
+  """Product price"""
+  price: Float!
+
+  """Units in stock"""
+  stock: Int!
+
+  """Last update timestamp"""
+  updatedAt: DateTime!
+}
+
+type Query {
+  """Get one brand by id"""
+  brand(id: Int!): BrandType!
+
+  """Get paginated brands"""
+  brands(limit: Int = 10, page: Int = 1): BrandPageType!
+
+  """Get paginated categories"""
+  categories(limit: Int = 10, page: Int = 1): CategoryPageType!
+
+  """Get one category by id"""
+  category(id: Int!): CategoryType!
+
+  """Get one product by id"""
+  product(id: Int!): ProductType!
+
+  """Get paginated products"""
+  products(limit: Int = 10, page: Int = 1): ProductPageType!
+}
+
+"""Input payload to update a brand"""
+input UpdateBrandInput {
+  """Brand name"""
+  name: String
+}
+
+"""Input payload to update a category"""
+input UpdateCategoryInput {
+  """Related brand identifier"""
+  brandId: Int
+
+  """Category name"""
+  name: String
+}
+
+"""Input payload to update a product"""
+input UpdateProductInput {
+  """Related category identifier"""
+  categoryId: Int
+
+  """Product description"""
+  description: String
+
+  """Product name"""
+  name: String
+
+  """Product price"""
+  price: Float
+
+  """Available stock quantity"""
+  stock: Int
+}
