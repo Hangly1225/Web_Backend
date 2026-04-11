@@ -26,7 +26,7 @@ function isStrongPassword(password) {
     return password.length >= 6 && /[A-Za-z]/.test(password) && /\d/.test(password);
 }
 
-document.getElementsByClassName('signin-btn')[0].addEventListener('click', function() {
+document.getElementsByClassName('signup-btn')[0].addEventListener('click', function() {
     const email = document.getElementsByClassName('email')[0].value.trim();
     const password = document.getElementsByClassName('password')[0].value;
     console.log('email');

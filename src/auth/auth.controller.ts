@@ -40,7 +40,7 @@ class LoginDto {
   password!: string;
 }
 
-class SigninDto extends LoginDto {
+class SignupDto extends LoginDto {
   @ApiProperty({ example: 'demo@example.com', description: 'Email address' })
   @IsEmail()
   @IsNotEmpty()
@@ -94,7 +94,7 @@ export class AuthController {
     return user;
   }
 
-  private async createUserAccount(dto: SigninDto) {
+  private async createUserAccount(dto: SignupDto) {
     const normalizedUsername = dto.username.trim();
     const normalizedEmail = dto.email.trim().toLowerCase();
     const normalizedPassword = dto.password.trim();
@@ -170,11 +170,11 @@ export class AuthController {
   }
 
   @PublicAccess()
-  @Post('signin')
+  @Post('signup')
   @ApiOperation({ summary: 'Register a new account' })
-  @ApiBody({ type: SigninDto })
-  async signin(
-    @Body() body: SigninDto,
+  @ApiBody({ type: SignupDto })
+  async signup(
+    @Body() body: SignupDto,
     @Req() req: SessionRequest,
     @Res() res: Response,
   ) {
@@ -186,10 +186,10 @@ export class AuthController {
   }
 
   @PublicAccess()
-  @Post('api/auth/signin')
+  @Post('api/auth/signup')
   @ApiOperation({ summary: 'Register a new account via API' })
-  @ApiBody({ type: SigninDto })
-  async apiSignin(@Body() body: SigninDto, @Req() req: SessionRequest) {
+  @ApiBody({ type: SignupDto })
+  async apiSignup(@Body() body: SignupDto, @Req() req: SessionRequest) {
     const user = await this.createUserAccount(body);
     const role = this.resolveRole(user.username);
 

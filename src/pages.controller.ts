@@ -46,9 +46,9 @@ export class PagesController {
     return { user: user ?? null };
   }
 
-  @Get('signin')
-  @Render('pages/signin')
-  signin(@Query('user') user?: string) {
+  @Get('signup')
+  @Render('pages/signup')
+  signup(@Query('user') user?: string) {
     return { user: user ?? null };
   }
 }
