@@ -1,9 +1,9 @@
 <%- include('../partials/head', { pageTitle: 'Signin', user, menuItems }) %>
-  <h3>Signin page</h3>
+  <h3>Signup page</h3>
   <form action="/signin" method="post">
     <input name="username" placeholder="username" required />
     <input name="email" type="email" placeholder="email" required />
     <input name="password" type="password" placeholder="password" required />
-    <button type="submit">Signin</button>
+    <button type="submit">Signup</button>
   </form>
 <%- include('../partials/footer') %>

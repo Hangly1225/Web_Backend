@@ -83,7 +83,7 @@ export class UsersService {
         username: true,
         email: true,
         createdAt: true,
-        updatedAt: true,
+        updatedAt: true, 
       },
     });
   }
