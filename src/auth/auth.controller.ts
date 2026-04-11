@@ -138,7 +138,7 @@ export class AuthController {
     } catch (error) {
       this.handlePrismaError(error);
     }
-  }
+  } 
 
   @PublicAccess()
   @Post('login')

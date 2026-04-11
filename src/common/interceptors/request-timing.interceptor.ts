@@ -33,7 +33,7 @@ export class RequestTimingInterceptor implements NestInterceptor {
       map((data) => {
         const elapsedTimeMs = Number(
           (performance.now() - startedAt).toFixed(2),
-        );
+        ); 
 
         if (
           wantsHtml &&

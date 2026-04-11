@@ -28,7 +28,7 @@ export class EtagInterceptor implements NestInterceptor {
 
     const isGet = request.method === 'GET';
     const isApiRequest = (request.path ?? '').startsWith('/api/');
-
+ 
     if (!isGet || !isApiRequest) {
       return next.handle();
     }

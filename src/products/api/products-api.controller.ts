@@ -55,7 +55,7 @@ export class ProductsApiController {
       result.meta.totalPages,
     );
     return result;
-  }
+  } 
 
   @Get(':id')
   @ApiOperation({ summary: 'Get one product by id' })
